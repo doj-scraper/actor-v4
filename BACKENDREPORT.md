@@ -2,6 +2,60 @@
 
 ---
 
+## Entry 11
+**Date/Time:** 2026-04-03 23:22 UTC  
+**Phase:** Vercel Deployment  
+**Author:** Backend
+
+### Vercel CLI Deploy — Failed
+- Linked `backend/` to `ctir-backendv1-official` and `frontend/` to `ctir-fe-ofc-v1`
+- Set all env vars on both Vercel projects via `vercel env add` (7 backend, 3 frontend)
+- `vercel --prod` failed both attempts: "Unexpected error" — build phase hung, no branch/commit metadata
+- Root cause: CLI deploy doesn't push git context (branch, commit SHA) that Vercel needs for builds
+- **Decision:** Switch to GitHub-triggered deployments — user creating new Vercel projects connected to repo
+
+### Env Var Reference (for new Vercel projects)
+
+**Backend project** (root dir: `backend/`):
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Neon pooled connection string (from Neon dashboard) |
+| `DIRECT_URL` | Neon direct connection string (non-pooled, for migrations) |
+| `CORS_ORIGIN` | Frontend deployment URL (e.g., `https://your-frontend.vercel.app`) |
+| `CLERK_PUBLISHABLE_KEY` | Clerk publishable key (from Clerk dashboard) |
+| `CLERK_SECRET_KEY` | Clerk secret key (from Clerk dashboard) |
+| `STRIPE_SECRET_KEY` | Stripe secret key (from Stripe dashboard) |
+| `NODE_ENV` | `production` |
+
+**Frontend project** (root dir: `frontend/`):
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_API_URL` | Backend deployment URL (e.g., `https://your-backend.vercel.app`) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (same as backend) |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (from Stripe dashboard) |
+
+### Vercel Build Settings
+
+**Backend:**
+- Framework: Other
+- Root Directory: `backend`
+- Build Command: `npx prisma generate && npx tsc`
+- Output Directory: *(leave empty)*
+- Install Command: `npm install`
+
+**Frontend:**
+- Framework: Next.js
+- Root Directory: `frontend`
+- Build Command: `next build`
+- Output Directory: `.next`
+- Install Command: `npm install`
+
+### Updated files
+- `backend/.env.example` — cleaned up, removed NEXT_PUBLIC vars (backend doesn't need them)
+- `frontend/.env.example` — cleaned up, removed CLERK_SECRET_KEY (frontend doesn't need it), added Stripe
+
+---
+
 ## Entry 10
 **Date/Time:** 2026-04-03 22:40 UTC  
 **Phase:** Full Integration — Services Live  
