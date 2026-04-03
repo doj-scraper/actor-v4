@@ -2,6 +2,49 @@
 
 ---
 
+## Entry 10
+**Date/Time:** 2026-04-03 22:40 UTC  
+**Phase:** Full Integration — Services Live  
+**Author:** Backend (handling both sides)
+
+### Clerk Auth — LIVE ✅
+- Added `CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` to backend `.env`
+- Added `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` to frontend `.env.local`
+- Sign-in and sign-up pages now render the real Clerk hosted form
+- Backend `@clerk/express` middleware active — session tokens verified
+- Fixed: backend health was 500 because `clerkMiddleware()` requires both publishable + secret keys
+
+### Stripe — LIVE ✅
+- Added `STRIPE_SECRET_KEY` to backend `.env`
+- Added `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to frontend `.env.local`
+- Backend logs: `"Stripe client initialized"`
+- Checkout flow can now process test payments (test mode keys)
+
+### Tailwind Config Fix
+- Renamed `tailwind.config.js` → `tailwind.config.cjs`
+- Package.json has `"type": "module"` but Tailwind config uses `module.exports` (CommonJS)
+- `.cjs` extension explicitly marks it as CommonJS — silences Turbopack ESM/CJS warning
+
+### Full Stack Status (Local)
+| Service | Status | Details |
+|---------|--------|---------|
+| Backend API | ✅ 200 | Port 3001, all endpoints |
+| Database | ✅ Healthy | Neon PostgreSQL, 244ms latency |
+| Clerk Auth | ✅ Active | Both keys configured |
+| Stripe | ✅ Initialized | Test mode |
+| Redis | ⚠️ Unavailable | In-memory LRU fallback |
+| Frontend | ✅ 200 | Port 3000, Turbopack, all routes |
+
+### Routes Verified (All 200)
+`/` · `/catalog` · `/inventory` · `/quote` · `/product/[skuId]` · `/support` · `/health` · `/sign-in` · `/sign-up`
+
+### Git Push
+- Commit `af5ff72`: tailwind.config.js → .cjs rename
+- Commit `2f8580c`: full-stack integration (268 files, 55K lines)
+- Both pushed to `origin/main`
+
+---
+
 ## Entry 9
 **Date/Time:** 2026-04-03 14:30 UTC  
 **Phase:** Full Integration (All Phases)  
