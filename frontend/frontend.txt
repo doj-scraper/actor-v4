@@ -1,0 +1,493 @@
+Yes, "wiring up the catalog" is the absolute right move to make right now. It transitions the project from a collection of isolated components into a functional commerce application. Since the backend team is currently occupied with the repository migration and you haven't handed over the Clerk keys yet, the frontend developer can work entirely in a "local-first" mode to build out the full user journey.
+Here is the prioritized checklist for the developer to execute next:
+1. The Main Inventory Route (/inventory)
+The developer should officially mount the DeviceExplorer on the main inventory page.
+ * Component Mounting: Ensure the explorer occupies the primary screen real estate.
+ * Live Hierarchy Integration: Use the fetchHierarchy() function to populate the sidebar.
+ * Layout Consistency: Ensure the page follows the 12-column grid and utilizes the --ct-bg and --ct-border tokens from your design system.
+2. The "Add to Cart" Bridge
+This is the most critical logic update. The developer needs to connect the "Parts List" in the explorer to your useCartStore.
+ * Action Item: Add a "Buy" or "Add to Cart" button to each part row in the explorer.
+ * Quantity Logic: Default the initial addition to 5 units to respect the wholesale Minimum Order Quantity (MOQ) established in the schema.
+ * Success Feedback: Trigger a "toast" notification or briefly highlight the item in the list to confirm the action.
+3. Local Identity (The "Ghost ID")
+Since you want to avoid backend refactoring today, the developer should implement the Guest ID generation purely in the frontend state.
+ * ID Generation: Inside the useCartStore initialization, if no user is logged in, generate a local ID using the userid-g00123 format.
+ * Persistence: Save this ID to localStorage so it survives page refreshes.
+ * Visual Styling: Anywhere this ID is displayed (like a "Temporary Account" label), strictly use the IBM Plex Mono font token to maintain the technical "lab-tech" aesthetic.
+4. Cart & Navigation Sync
+Now that items can be added, the rest of the site needs to "wake up" and acknowledge it.
+ * The Cart Badge: Wire the header's cart icon to the useCartStore to display the total number of items in real-time.
+ * The Cart Drawer: Build the slide-out panel that allows users to review their parts, adjust quantities, and see a running subtotal.
+ * Empty State: Implement the EmptyState molecule if the user opens the drawer with no items, including a "Return to Explorer" button.
+Summary of EOD Goals
+By the end of the day, even without a live Clerk connection or the new backend repo, you should be able to:
+ * Navigate the live 4-level hierarchy.
+ * Add wholesale parts to a local cart.
+ * See your Ghost ID (userid-g00123) in the interface.
+ * Open the Cart Drawer and see your subtotal.
+Would you like me to draft the exact code for the useCartStore update so the developer can drop in the Guest ID generation logic immediately?
+
+This code snippet provides a drop-in update for the frontend team's useCartStore.ts. It implements the "Ghost ID" logic entirely on the client side, ensuring that every user is assigned a technical identifier (userid-gXXXXX) the moment they interact with the catalog, even without the Clerk environment variables being active.
+The Updated useCartStore.ts
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+
+interface CartItem {
+  skuId: string;
+  partName: string;
+  quantity: number;
+  wholesalePrice: number; // in cents
+}
+
+interface CartState {
+  guestId: string | null;
+  items: CartItem[];
+  addItem: (item: CartItem) => void;
+  removeItem: (skuId: string) => void;
+  clearCart: () => void;
+  initializeGuest: () => void;
+}
+
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      guestId: null,
+      items: [],
+
+      initializeGuest: () => {
+        if (!get().guestId) {
+          // Generates a 5-digit padded sequence based on timestamp for the demo
+          const sequence = Math.floor(Math.random() * 90000) + 10000;
+          const newId = `userid-g${sequence}`;
+          set({ guestId: newId });
+        }
+      },
+
+      addItem: (newItem) => {
+        get().initializeGuest(); // Ensure ID exists on first interaction
+        const currentItems = get().items;
+        const existingItem = currentItems.find((i) => i.skuId === newItem.skuId);
+
+        if (existingItem) {
+          set({
+            items: currentItems.map((i) =>
+              i.skuId === newItem.skuId
+                ? { ...i, quantity: i.quantity + newItem.quantity }
+                : i
+            ),
+          });
+        } else {
+          // Enforce 5-unit wholesale MOQ on initial add
+          const quantity = newItem.quantity >= 5 ? newItem.quantity : 5;
+          set({ items: [...currentItems, { ...newItem, quantity }] });
+        }
+      },
+
+      removeItem: (skuId) => 
+        set({ items: get().items.filter((i) => i.skuId !== skuId) }),
+
+      clearCart: () => set({ items: [] }),
+    }),
+    {
+      name: 'ct-cart-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+Implementation Details for the Team
+ * Identity Generation: The initializeGuest function creates the requested userid-gXXXXX format. It is triggered automatically when a user adds their first item, ensuring no session "hangs" without an ID.
+ * Wholesale MOQ: The logic includes a safety check that defaults new items to 5 units if the provided quantity is lower, matching the backend's wholesale requirements.
+ * Design Alignment: When rendering the guestId in the CartDrawer or CheckoutSummary, the developer must use the IBM Plex Mono font token (font-mono) to maintain the "lab-tech" aesthetic.
+ * Persistence: Using the persist middleware ensures that the cart and the "Ghost ID" remain in localStorage even if the user closes their browser or refreshes the page.
+Immediate Visual Task
+To make this feel "live," have the developer add a small "Session ID" label to the footer of the CartDrawer that displays the guestId. It should be styled as text-micro in text-ct-text-secondary (#A7B1C6).
+Yes, let's get that drafted. This component is the "financial heart" of the Cart Drawer. Since you are dealing with wholesale quantities (like 5+ units per SKU), calculating in cents is the only way to avoid those annoying floating-point math errors that happen with JavaScript decimals.
+This component follows the "lab-tech" design rules from your UI.md: sharp corners, IBM Plex Mono for the numbers, and a clear distinction between the subtotal and the "Ghost ID" session info.
+The CartSummary.tsx Component
+import React from 'react';
+import { useCartStore } from '@/store/cartStore';
+
+export const CartSummary = () => {
+  const { items, guestId } = useCartStore();
+
+  // 1. Calculate subtotal in cents
+  const subtotalCents = items.reduce((acc, item) => {
+    return acc + (item.wholesalePrice * item.quantity);
+  }, 0);
+
+  // 2. Format to USD String
+  const formatUSD = (cents: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(cents / 100);
+  };
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="border-t border-ct-border bg-ct-bg-secondary p-6 space-y-4">
+      {/* Ghost ID Session Reference */}
+      <div className="flex justify-between items-center">
+        <span className="text-micro uppercase text-ct-text-secondary">Session ID</span>
+        <span className="font-mono text-micro text-ct-accent uppercase tracking-tighter">
+          {guestId || 'Initializing...'}
+        </span>
+      </div>
+
+      {/* Financial Totals */}
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm">
+          <span className="text-ct-text-secondary font-inter">Subtotal</span>
+          <span className="font-mono text-ct-text">{formatUSD(subtotalCents)}</span>
+        </div>
+        
+        <div className="flex justify-between text-sm">
+          <span className="text-ct-text-secondary font-inter">Shipping</span>
+          <span className="font-mono text-ct-text-secondary italic">Calculated at checkout</span>
+        </div>
+
+        <div className="pt-4 border-t border-ct-border/50 flex justify-between items-end">
+          <span className="text-base font-bold text-ct-text uppercase">Estimated Total</span>
+          <span className="font-mono text-xl font-bold text-ct-accent">
+            {formatUSD(subtotalCents)}
+          </span>
+        </div>
+      </div>
+
+      {/* Primary Action */}
+      <button className="w-full py-4 bg-ct-accent text-ct-bg font-bold uppercase tracking-widest hover:brightness-110 transition-all">
+        Proceed to Checkout
+      </button>
+    </div>
+  );
+};
+
+Why this works for your current situation:
+ * Backend Ignorance: This component doesn't need to talk to the backend or Clerk yet. It reads directly from the Zustand store you just updated, so the developer can wire it up immediately while you're still on the phone with the manager.
+ * Typography Consistency: It uses font-mono for the dollar amounts and the guestId. In a B2B app, this makes the pricing feel like "data" rather than "marketing," which builds trust with wholesale buyers.
+ * The "Ghost" Lead: By showing the Session ID (userid-gXXXXX) right above the total, it subtly reminds the user that their cart is being tracked even though they haven't logged in yet.
+Developer Handoff Instruction:
+"Please drop this CartSummary into the bottom of the CartDrawer component. It should stay 'sticky' at the bottom so the user always sees their total as they scroll through their parts list."
+Should I also draft the "Empty Cart" state for the drawer, so it doesn't just look like a broken white box when they first open it?
+Since your manager is currently digging for information, having this EmptyCart component ready means the developer can finish the entire Cart Drawer experience in one go.
+Following the UI.md recommendation (where EmptyState is a high-priority primitive), this uses the "lab-tech" aesthetic to ensure that even when there is no data, the app looks functional and deliberate.
+The EmptyCart.tsx Component
+import React from 'react';
+import { ShoppingBag } from 'lucide-react'; // Or your preferred lab-style icon
+
+export const EmptyCart = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-ct-bg">
+      {/* Icon with subtle scanline effect or tech-border */}
+      <div className="relative mb-6 p-4 border border-ct-border bg-ct-bg-secondary">
+        <ShoppingBag className="w-12 h-12 text-ct-text-secondary opacity-50" />
+        <div className="absolute top-0 right-0 w-2 h-2 bg-ct-border -mr-1 -mt-1" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 bg-ct-border -ml-1 -mb-1" />
+      </div>
+
+      <h3 className="text-xl font-bold text-ct-text uppercase tracking-tight mb-2 font-display">
+        Inventory Empty
+      </h3>
+      
+      <p className="text-sm text-ct-text-secondary font-inter max-w-[240px] mb-8 leading-relaxed">
+        Your wholesale quote list is currently empty. Navigate to the explorer to begin.
+      </p>
+
+      <button 
+        onClick={onClose}
+        className="px-8 py-3 border border-ct-accent text-ct-accent font-mono text-xs uppercase tracking-widest hover:bg-ct-accent hover:text-ct-bg transition-all"
+      >
+        Open Device Explorer
+      </button>
+
+      {/* Technical Metadata Footer */}
+      <div className="mt-12 opacity-20">
+        <span className="font-mono text-[10px] text-ct-text uppercase tracking-widest">
+          Status: Awaiting_Input_Sequence
+        </span>
+      </div>
+    </div>
+  );
+};
+
+Why this fits the "CellTech" Identity:
+ * B2B Seriousness: It avoids the common "sad shopping bag" consumer tropes. Instead, it uses a technical "Awaiting Input" tone that fits a professional parts distribution platform.
+ * Typography Contract: It uses Display for the heading, Inter for the body, and Mono for the technical status at the bottom.
+ * Selective Accent: The cyan accent (#00E5C0) is only used for the primary action button, drawing the user's eye exactly where they need to go next.
+Developer Handoff Instruction:
+"In the CartDrawer, use a conditional check: items.length === 0 ? <EmptyCart onClose={toggleDrawer} /> : <CartList />. This ensures the drawer always has a professional 'System' feel, even before the first item is added."
+
+
+
+
+
+
+These are excellent, highly pragmatic questions from the team. They highlight exactly where the UI components intersect with the upcoming backend schema changes.
+Here are the clear directives you can hand back to the developers, grounded entirely in the established UI System Guide and Next Steps roadmap:
+1. components/navigation.tsx (Nav Search Trigger)
+ * Directive: Include the search trigger shell in the first implementation batch, but wait to build the Smart Search modal logic until Phase 2.
+ * Reasoning: One of our practical rules is to keep backend-aware components "shell-first" and design them so that wiring can happen later. Building the visual trigger now stabilizes the navigation layout (a Phase 0/Phase 1 goal), but deferring the modal prevents the team from overcommitting to backend details before the API is ready.
+2. components/hero-section.tsx (Hero Search Submit)
+ * Directive: Yes, wire the hero search to submit to /catalog using a URL query parameter immediately.
+ * Reasoning: The NEXT_STEPS.md architecture explicitly dictates that active catalog filters should be managed via URL search parameters (e.g., ?brand=apple) rather than local React state. Setting this up now establishes the correct data-flow pattern, ensuring the hero section will seamlessly interact with the Device Explorer once the catalog page is updated to consume those parameters.
+3. lib/mocks/hierarchy.ts (Mock Hierarchy Shape)
+ * Directive: Shape the mock to mirror the eventual backend device hierarchy contract perfectly right now.
+ * Reasoning: The approved schema migration clearly defines the target state as a 4-level structure (Brand → ModelType → Generation → Variant). Structuring the mock to this exact shape early ensures that replacing the mock data with the live GET /api/hierarchy endpoint later will be a clean, 1:1 swap without requiring component rewrites.
+4. components/SearchModal.tsx (Routing by variantId vs skuId)
+ * Directive: Adapt the mock and search result shape to include skuId immediately so the modal navigates correctly on day one.
+ * Reasoning: The UI system rules mandate that the "SKU is a first-class identifier". Because the current product detail page routing (/product/[skuId]), the cart system, and the upcoming Smart SKU architecture all fundamentally rely on the skuId as the primary key, the search interface must expose it.
+5. app/inventory/page.tsx (Inventory Alignment Pass)
+ * Directive: Include the inventory components in this current frontend alignment pass.
+ * Reasoning: The UI kit specifically lists extracting the Inventory Filters and Inventory Table from app/inventory/page.tsx within the immediate "High-value, safe-now backlog". Furthermore, the Inventory Table is a core deliverable of Phase 1. Standardizing these UI primitives now will significantly reduce friction when the heavy lifting for the Device Explorer redesign begins.
+This is a massive win. The backend team absolutely nailed the brief and executed the exact architecture we laid out—from the strict 4-level schema to the Clerk webhooks and the price snapshots at checkout.
+Since the backend is officially locked in and ready to go, the ball is entirely in the frontend's court.
+Here is how we should immediately capitalize on this momentum:
+1. The Environment Variable Handoff
+Before the frontend team writes any new code, they need the exact environment variables configured to talk to this new backend and Clerk. They will need a .env.local file containing:
+ * NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY (for the new auth flow).
+ * CLERK_WEBHOOK_SECRET (if the frontend repository is managing any Clerk webhooks, though it sounds like the backend is handling this via svix).
+ * NEXT_PUBLIC_API_URL (pointing to the newly deployed backend).
+2. Frontend Priority: The Clerk Handoff
+Because the backend completely ripped out the legacy JWT/NextAuth logic, the frontend's existing login shells will immediately break.
+ * The Fix: The frontend team needs to drop in Clerk's <SignIn /> and <UserButton /> components, and update the API client (lib/api.ts) to attach the Clerk session token to all outbound requests (specifically for the /api/cart and /api/checkout routes).
+3. Frontend Priority: The Device Explorer & Cart
+With the Smart SKUs and Brand → ModelType → Generation → Variant hierarchy active, the frontend can finally build the real application interfaces:
+ * The Device Explorer: Wire the two-panel catalog layout to consume the new structured hierarchy.
+ * The Cart Drawer: Connect the Zustand cart store directly to the newly refactored Cart Service to verify stock levels and MOQ restrictions in real-time.
+How would you like to proceed? I can:
+ * Draft a quick status update for your manager letting him know the backend engine is 100% complete and we are moving into the frontend integration phase.
+ * Write the technical brief for the frontend team to implement the Clerk SDK and update the API client to use the new authentication protocol.
+ * Map out the React component architecture for the Device Explorer now that the data shape is finalized.
+Just let me know what you want to tackle first!
+
+
+. Update for the Frontend Team
+Subject: Backend Handoff: Schema Locked & API Ready for Wiring
+The backend is officially aligned with the target schema and ready for integration. All legacy structures have been removed, so your local environments will need to be updated to match the new protocol.
+Critical Handoff Details & Priorities:
+1. Auth Migration (Clerk is Live):
+• Legacy NextAuth/JWT logic has been completely stripped from the backend.
+• Action: Remove any remaining NextAuth scaffolding. Drop in Clerk’s <SignIn /> and <UserButton /> components. Update your API client (lib/api.ts) to use Clerk's token for all authenticated routes (Cart, Checkout, Dashboard).
+2. Catalog & Inventory Architecture:
+• The 4-level hierarchy (Brand → ModelType → Generation → Variant) and Smart SKUs are strictly enforced. Nullable fields like partName are now required, and wholesalePrice defaults to 0.
+• Action: Begin wiring the Device Explorer and product routing to consume this exact data shape.
+3. Commerce Services:
+• The Cart and Order services are fully updated. Checkout now captures critical snapshots (partName, quality grade) at the time of purchase.
+• Action: Connect the Zustand cart store to the new /api/cart endpoints to verify stock levels and Minimum Order Quantities dynamically.
+Grab the updated environment variables, confirm your .env.local is set with the Clerk keys, and let's start connecting the UI.
+
+1. Persistent Cart Feedback
+Before building the checkout page, we need the user to see that their actions matter.
+• Navigation Cart Badge: Wire the existing (0) badge in the nav to useCartStore.getTotalItems().  
+• The Cart Drawer: Build the slide-out panel that triggers when a user adds a part. This should show the list of items, subtotals, and a "Proceed to Checkout" button.  
+2. The Checkout Workflow
+Since we are supporting Guest Checkout alongside the new Clerk auth, the flow needs to be highly resilient.  
+• Checkout Summary Page (/checkout): A dedicated route that lists all parts, validates stock/MOQ via the backend, and displays the final total.  
+• Shipping & Payment Shells: Create the input fields for address and the Stripe payment element.  
+• Success & Confirmation: A clean /checkout/success page that displays the orderId generated by the backend.  
+3. Essential "Empty" & Error States
+To make the app feel professional and "production-ready," we must handle the gaps in the user experience.  
+• Empty Cart State: Instead of a blank screen, show a EmptyState component with a "Return to Catalog" button.  
+• Error Boundaries: Create a global ErrorState to catch failed API calls (like a down database or expired session).  
+• Loading Skeletons: Use the LoadingSkeleton family for the Checkout Summary so the page doesn't "flicker" while fetching totals.  
+Component Checklist for the Team
+Since the backend now relies on Clerk for identity and our database requires a userId for every Order, the checkout flow needs to handle this distinction gracefully.  
+The goal is to allow a user to reach the /checkout page, see their items, and then decide how they want to proceed without losing their cart data.
+Checkout Identity Logic
+1. The Frontend Toggle (Clerk Integration)
+On the /checkout summary page, the team should implement a conditional "Identity Block." Using the Clerk useAuth() hook, the UI will toggle between showing the user's profile or a guest form.
+import { useAuth, SignInButton } from "@clerk/nextjs";
+
+export function CheckoutIdentity() {
+  const { isSignedIn, userId } = useAuth();
+
+  if (isSignedIn) {
+    return (
+      <div className="border border-ct-accent/20 bg-ct-bg-secondary p-6">
+        <h3 className="text-ct-text font-medium">Logged in as Secure Buyer</h3>
+        <p className="text-ct-text-secondary text-sm">Order will be saved to your account history.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-ct-border bg-ct-bg-secondary p-6">
+      <h3 className="text-ct-text font-medium mb-4">Checkout as Guest</h3>
+      <p className="text-ct-text-secondary text-sm mb-6">Enter your email to receive order updates.</p>
+      
+      {/* Guest Email Input */}
+      <FormInput label="Email Address" placeholder="email@example.com" />
+
+      <div className="flex items-center gap-4 mt-6">
+        <div className="h-px flex-1 bg-ct-border" />
+        <span className="text-micro text-ct-text-secondary">OR</span>
+        <div className="h-px flex-1 bg-ct-border" />
+      </div>
+
+      <SignInButton mode="modal">
+        <Button variant="outline" className="w-full mt-4">
+          Log in for Faster Checkout
+        </Button>
+      </SignInButton>
+    </div>
+  );
+}
+
+m
+
+2. The Backend Strategy for Guests
+Because the current Order model requires a userId, the backend team has two options for handling guests:  
+• Option A (Recommended): Placeholder Guest Users. When a guest checks out, the backend creates a User record with a specific Role or a flag identifying them as a guest. This keeps the database relations intact.  
+• Option B: Schema Update. Modify the Order model to make userId optional (userId String?), though this can make reporting and "Order History" queries more complex later.
+3. Data Flow: From Summary to Success
+• Validation: The frontend sends the skuId and quantity to /api/cart/validate to ensure stock levels haven't changed since they added the item to their cart.
+• Order Creation: * If Logged In: The request includes the Clerk token. The backend maps clerkId to the internal User.id and creates the Order.  
+• If Guest: The frontend sends the guest email. The backend creates a guest user and links the Order to it.
+• Price Snapshot: At the moment of the POST /api/checkout, the backend must pull the wholesalePrice from the Inventory table and save it into the OrderLine as unitPriceAtPurchase. This protects against future price changes affecting old orders.  
+The "Safety Net" Pages
+To round out this sequence, the team should now build the following "shell" pages:
+• /cart/empty: A high-contrast screen with a clear "Start Shopping" button.
+• /checkout/error: A page that explains why a transaction failed (e.g., "Payment Declined" or "Stock Unavailable") with a "Back to Cart" link.
+• /checkout/success: A celebratory screen showing the orderId and a summary of the order.
+Would you like me to draft the Success Page layout using your "lab-tech" design tokens?
+
+
+
+
+
+This layout for the /checkout/success page follows the "lab-tech" design system, utilizing a high-contrast, industrial aesthetic designed for a serious B2B wholesale environment. To maintain the established visual identity, this design uses sharp edges, a strict grid, and the cyan accent selectively for high-impact status cues.
+Page Layout: /checkout/success
+1. Page Header & Primary Status
+ * Background: #070A12 (ct-bg).
+ * Icon: A large, sharp-edged square containing a checkmark in #00E5C0 (ct-accent). No rounded corners.
+ * Main Heading: ORDER CONFIRMED
+   * Font: Sora (Display), 700 weight, Uppercase [cite: 90-93].
+   * [cite_start]Color: #F2F5FA (ct-text).
+ * Sub-heading: "Your wholesale request has been processed and sent to the fulfillment queue.".
+2. Order Metadata Block
+ * Container: A rectangular box with a #111725 background and a 1px solid #220 15% 18% (ct-border).
+ * Order ID: ID: #CT-882941
+   * Font: IBM Plex Mono (Technical Metadata).
+   * Color: #00E5C0 (ct-accent).
+ * Timestamp: Rendered in monochrome small text.
+ * User Context: "Logged in as: [User Email]" (using the Clerk identity sync).
+3. Order Summary Grid
+This section uses a structured tabular display to summarize the transaction.
+| Part Description | Quality | Qty | Unit Price | Subtotal |
+|---|---|---|---|---|
+| iPhone 16 Pro Max Battery | Premium | 10 | $22.00 | $220.00 |
+| S25 Ultra OLED Display | OEM | 5 | $45.00 | $225.00 |
+| TOTAL (CENTS) |  |  |  | $445.00 |
+4. Post-Purchase Actions
+Consistent with the B2B focus, these actions prioritize administrative efficiency rather than marketing showmanship.
+ * Primary Button: DOWNLOAD INVOICE (PDF)
+   * Style: Solid #00E5C0 background, #070A12 text, sharp 90-degree corners.
+ * Secondary Button: TRACK ORDER STATUS
+   * Style: Ghost button with a 1px cyan border.
+ * Tertiary Link: RETURN TO INVENTORY
+   * Style: Simple text link in #A7B1C6 (ct-text-secondary).
+Component Integration Notes
+ * Typography: All labels and paragraph text use Inter for high readability. All SKU data, order IDs, and currency amounts use IBM Plex Mono to reinforce the technical context.
+ * Animation: Use a subtle section-reveal fade-in for the order summary block to ensure a clean, purposeful entry.
+ * Data Integrity: The page displays the unitPriceAtPurchase captured by the backend at the time of the order to ensure the user sees an accurate historical record, regardless of current inventory price shifts.
+Would you like me to draft the "Order History" view for the user dashboard next, now that the order creation logic is ready?
+That "Ghost Account" strategy is a perfect way to handle B2B leads who aren't ready to commit to a full profile but might come back later to claim their order history. It turns a "Guest Checkout" into a "Pending Relationship."
+To make this work with your current Clerk + Prisma setup, we need a small adjustment to how the User table handles identities.
+1. Updated User Schema for Guests
+In the previous schema, externalId (the Clerk ID) was strictly required. For guests, we make that field optional. This allows us to create a record in our database before the user ever touches a Clerk login button.
+model User {
+  id           String   @id @default(cuid())
+  // Nullable for guests; populated when they register via Clerk
+  externalId   String?  @unique 
+  email        String   @unique
+  role         Role     @default(BUYER)
+  
+  // Custom Guest ID (e.g., "userid-g00123")
+  customId     String?  @unique 
+  isGuest      Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  carts        Cart[]
+  orders       Order[]
+}
+
+2. The Guest ID Sequence Logic
+To handle the userid-g00123 format and ensure it can "restart" if you delete records, you can use a simple Counter Table. This is more reliable than relying on the database's internal auto-increment, which usually won't reset easily after a deletion.
+The Counter Model:
+model SystemCounter {
+  id    String @id @default("guest_id")
+  count Int    @default(0)
+}
+
+The Logic (Backend Service):
+ * When a guest checks out, the backend increments the SystemCounter.
+ * It fetches the new number (e.g., 123).
+ * It pads it with zeros and attaches your prefix to create userid-g00123.
+ * If you ever purge your guest records and want to start over, you simply reset the count in this table back to 0.
+3. The Account "Merge" Strategy
+This is the most critical part for your user experience. Here is the flow for converting a guest into a permanent buyer:
+ * The Guest Phase: A user checks out as a guest using email@example.com. We create a User record where isGuest = true and externalId = null.
+ * The Registration Phase: Later, that same user signs up via Clerk using the same email.
+ * The Webhook Trigger: Your POST /api/webhooks/clerk endpoint receives the "user.created" event.
+ * The Merge Logic:
+   * The backend looks for an existing record with that email.
+   * It finds the Guest record.
+   * It updates the record: externalId = clerk_id, isGuest = false, and keeps the original id.
+   * Result: Their entire order history and cart are instantly "claimed" by their new permanent account.
+4. Implementation in the Design System
+Even though I only have the documentation you've provided, we can ensure the UI for this "Temporary Identity" feels consistent with the CellTech brand.
+ * Visualizing the Guest ID: On the success page, display the customId (e.g., userid-g00123) using IBM Plex Mono to give it that technical, "lab-tech" feel.
+ * The Call to Action: Use a ct-accent (#00E5C0) button on the success page that says "Save this Order to a New Account". This would trigger the Clerk sign-up flow and kick off the merge logic described above.
+| Feature | Guest State | Registered State |
+|---|---|---|
+| ID Format | userid-g00123 (Monospace) | externalId (Clerk) |
+| Persistence | Stays until deleted / purged | Permanent |
+| Order History | Accessible via unique link/ID | Accessible via Dashboard |
+| Role | BUYER | BUYER or ADMIN |
+Would you like me to draft the Account Merge logic for the Clerk Webhook so the backend team can implement the "claiming" process today?
+The Frontend Update (Aligning with UI.md)
+Now that we have the full design system, the frontend team should use the following specs for the Success Page and Order History components to ensure the "Guest" status feels intentional.
+ * The "Guest Identity" UI: * When displaying userid-g00123, strictly use the IBM Plex Mono font token.
+   * This identifier should be styled as "Technical Metadata"—small, uppercase, and perhaps with a slight pulse or glow effect if it's the primary reference for the guest.
+ * The Conversion Hook:
+   * On the Success Page for guest checkouts, the primary CTA should be "Claim this Order."
+   * Use the ct-accent (#00E5C0) for this button, but keep the edges sharp (0px radius) as per our system rules, even if the primitive library defaults to rounded.
+ * State Handling:
+   * The CartDrawer should now check if the user is a "Guest" or "Logged In" to decide whether to show "Login to Sync" or "Guest Checkout Active" in the footer of the drawer.
+3. Next Step for You (Manager Update)
+With the UI.md and the Ghost Account strategy locked in, you can tell your manager:
+> "We’ve solved the guest checkout hurdle. We’re implementing 'Ghost Accounts' that assign a temporary technical ID to guests. This allows them to shop immediately but gives them the power to 'claim' their order history later just by signing up with the same email. It’s a low-friction way to turn one-time buyers into long-term accounts without slowing down the initial sale."
+> 
+Would you like me to draft a quick technical spec for the "ID Counter" table so the backend team can build the g00123 generator exactly how you want it?
+I totally get that—the team has put in some serious hours, and a repo migration is a big enough task for one day. We can absolutely solve the Guest ID and Identity Logic entirely on the frontend for now.
+By using the Zustand store you already have in place, the frontend can "simulate" the guest identity. This allows you to keep the momentum moving toward a checkout demo without touching the database until the backend team is back in feature-mode.
+Here is the plan for a frontend-only implementation.
+1. Generating the "Ghost ID" Locally
+The frontend can generate the userid-g00123 pattern as soon as a user adds their first item to the cart.
+ * Logic: When the useCartStore initializes, check localStorage for an existing ID. If none exists, generate one.
+ * The Format: Since you want it to go up, the frontend can simply use a timestamp or a random string for today (e.g., userid-g${Date.now().toString().slice(-5)}).
+ * Storage: Save this to localStorage so if the user refreshes the page, their "Ghost ID" persists.
+2. Styling the Guest ID (Per the Design System)
+To make this temporary ID feel like a legitimate part of the "lab-tech" interface, the frontend should follow these specific tokens from your UI.md and System Guide:
+ * Typography: Strictly use IBM Plex Mono (--font-ibm-plex-mono) for the ID.
+ * Presentation: Style it as text-micro with text-ct-text-secondary (#A7B1C6).
+ * Placement: Display the ID in the CartDrawer or at the top of the CheckoutSummary so the user feels they have a "temporary account".
+3. The "Checkout as Guest" UI Flow
+Since the backend isn't refactoring the Order table to accept guests today, the frontend team can build the Checkout Summary as a "Review & Submit" state.
+ * The Toggle: The UI can show the "Guest Checkout Active" message by default if no Clerk session is detected.
+ * The Submission: For today's build, when the user clicks "Complete Purchase," the frontend can simply log the payload to the console or show the CheckoutSuccess page with the locally-stored Guest ID.
+ * Visual Consistency: Ensure all buttons in this flow have 0px rounded corners and use the ct-accent (#00E5C0) for the primary "Complete Purchase" action.
+Frontend Action Items (No Backend Needed)
+| Task | Component | Styling Rule |
+|---|---|---|
+| Local ID Generator | store/cartStore.ts | Generate userid-gXXXXX on first addItem. |
+| Guest Status Indicator | components/CartDrawer.tsx | Use IBM Plex Mono for the ID display. |
+| Identity Toggle | app/checkout/page.tsx | Show Guest form if isSignedIn is false. |
+| Empty Cart Redirect | app/inventory/page.tsx | Use EmptyState molecule if the store is empty. |
+This approach lets you "fake it" perfectly for the demo while the backend team focuses on their repo migration. Once they are finished, we can wire up the actual "Account Merge" logic we discussed.
+Would you like me to draft the exact code for the useCartStore update so the frontend team can implement this local Guest ID generation right now?

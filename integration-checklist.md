@@ -12,6 +12,34 @@ This checklist follows a **slow rollout strategy** with clear contract boundarie
 
 ---
 
+## Phase 0: Contract Alignment Fixes
+
+**Goal**: fix known client/server contract drift before using this checklist as an execution guide.
+
+### Required Fixes
+- [ ] Frontend API client must parse backend-specific payload keys instead of assuming `data`
+  - [ ] `GET /api/brands` → `brands`
+  - [ ] `GET /api/models` → `models`
+  - [ ] `GET /api/hierarchy` → `hierarchy`
+  - [ ] `GET /api/parts` → `parts`
+  - [ ] `GET /api/inventory` → `inventory`
+  - [ ] `GET /api/inventory/:skuId` → `part`
+  - [ ] `GET /api/inventory/model/:modelId` → `parts`
+- [ ] Frontend detailed health parser must consume backend status values `green | yellow | red`
+- [ ] Frontend detailed health parser must treat `services` as an array, not an object
+- [ ] Frontend API base URL must default to local development, not the production backend
+- [ ] Add frontend tests covering the above contract assumptions
+
+### Success Criteria
+- [ ] Catalog, inventory, and product detail pages render real backend data locally
+- [ ] Admin health page shows a backend `red` service as red
+- [ ] Missing `NEXT_PUBLIC_API_URL` points local development at localhost, not production
+
+**Timeline**: ~1 hour  
+**Blockers**: stale mocks, local env drift, untested client assumptions
+
+---
+
 ## Phase 1: API Health Check ✅
 
 **Goal**: Prove the pipe is open. Frontend can reach backend. CORS works. Server is running.

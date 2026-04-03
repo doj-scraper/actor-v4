@@ -1,0 +1,786 @@
+
+ RUN  v3.2.4 /home/mya/Desktop/Project/dojscraper/github/officialfrontend
+
+(node:60442) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ tests/device-explorer.test.tsx > device explorer > renders the loading state before hierarchy data arrives 98ms
+ ✓ tests/device-explorer.test.tsx > device explorer > renders the error state when no hierarchy is available 86ms
+ × tests/device-explorer.test.tsx > device explorer > drills into a variant and fetches compatible parts 1266ms
+   → Found multiple elements with the text: iPhone
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0miPhone[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"font-medium text-ct-text"[39m
+[36m>[39m
+  [0miPhone[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/device-explorer.test.tsx > device explorer > drills into a variant and fetches compatible parts
+TestingLibraryElementError: Found multiple elements with the text: iPhone
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0miPhone[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"font-medium text-ct-text"[39m
+[36m>[39m
+  [0miPhone[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/device-explorer.test.tsx:91:18
+     89| 
+     90|     await userEvent.click(await screen.findByRole("button", { name: "A…
+     91|     await screen.findByText("iPhone");
+       |                  ^
+     92|     await userEvent.click(screen.getByText("iPhone"));
+     93|     await screen.findByText(/14 Series/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  05:47:11
+   Duration  6.20s (transform 618ms, setup 736ms, collect 976ms, tests 1.45s, environment 1.78s, prepare 340ms)
+
+
+EXIT:1

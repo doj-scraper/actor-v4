@@ -1,0 +1,855 @@
+
+> celltech-ecom@0.0.0 test
+> vitest run --reporter=dot
+
+
+ RUN  v3.2.4 /home/mya/Desktop/Project/dojscraper/github/officialfrontend
+
+(node:60613) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+···(node:60614) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+··stderr | tests/checkout-section.test.tsx > checkout section > shows the empty cart shell when nothing has been added
+Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>.
+
+xxx(node:60699) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+····(node:60679) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+stderr | tests/inventory-page.test.tsx > inventory page > shows the explorer CTA in the hero
+An update to DeviceExplorer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to DeviceExplorer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/inventory-page.test.tsx > inventory page > shows the explorer CTA in the hero
+An update to InventoryPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to InventoryPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to InventoryPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to InventoryPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | tests/inventory-page.test.tsx > inventory page > shows the error shell when loading fails
+Error fetching inventory: Error: network down
+    at [90m/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mtests/inventory-page.test.tsx:74:65
+    at mockCall [90m(file:///home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:96:15[90m)[39m
+    at spy [90m(file:///home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4mtinyspy[24m/dist/index.js:47:80[90m)[39m
+    at fetchInventory [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mlib/api.ts:47:28[90m)[39m
+    at loadData [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mapp/inventory/page.tsx:32:9[90m)[39m
+    at [90m/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mapp/inventory/page.tsx:48:5
+    at Object.react_stack_bottom_frame [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4mreact-dom[24m/cjs/react-dom-client.development.js:25989:20[90m)[39m
+    at runWithFiberInDEV [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4mreact-dom[24m/cjs/react-dom-client.development.js:874:13[90m)[39m
+    at commitHookEffectListMount [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4mreact-dom[24m/cjs/react-dom-client.development.js:13249:29[90m)[39m
+    at commitHookPassiveMountEffects [90m(/home/mya/Desktop/Project/dojscraper/github/officialfrontend/[39mnode_modules/[4mreact-dom[24m/cjs/react-dom-client.development.js:13336:11[90m)[39m
+
+····
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/checkout-section.test.tsx > checkout section > shows the empty cart shell when nothing has been added
+TestingLibraryElementError: Found multiple elements with the text: /Your cart is empty\./i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"text-lg font-medium tracking-tight text-ct-text"[39m
+  [33mdata-slot[39m=[32m"empty-title"[39m
+[36m>[39m
+  [0mYour cart is empty.[0m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"sr-only"[39m
+[36m>[39m
+  [0mYour cart is empty. Return to the inventory explorer to stage parts or switch to quote mode.[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"pt-24 pb-20"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"pt-24 pb-12 lg:pt-28 lg:pb-14"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto px-6 lg:px-12"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-6"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"max-w-3xl"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-micro text-ct-accent mb-3"[39m
+              [36m>[39m
+                [0mCheckout[0m
+              [36m</p>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"heading-display text-3xl sm:text-4xl lg:text-5xl text-ct-text"[39m
+              [36m>[39m
+                [0mLOCK IN THE [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-ct-accent"[39m
+                [36m>[39m
+                  [0mORDER[0m
+                [36m</span>[39m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"mt-4 text-sm lg:text-base text-ct-text-secondary max-w-2xl"[39m
+              [36m>[39m
+                [0mReview quantities, capture shipping details, and confirm a clean order without leaving the storefront flow.[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"btn-secondary"[39m
+                [33mhref[39m=[32m"/inventory"[39m
+              [36m>[39m
+                [0mBack to explorer[0m
+              [36m</a>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"btn-primary"[39m
+                [33mhref[39m=[32m"/quote"[39m
+              [36m>[39m
+                [0mQuote instead[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto px-6 lg:px-12"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-8"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary/80 border-white/10 shadow-card"[39m
+            [33mdata-slot[39m=[32m"card"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-6 lg:p-10"[39m
+              [33mdata-slot[39m=[32m"card-content"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center text-balance md:p-12 border-white/10 bg-ct-bg/40"[39m
+                [33mdata-slot[39m=[32m"empty"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex max-w-sm flex-col items-center gap-2 text-center"[39m
+                  [33mdata-slot[39m=[32m"empty-header"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"mb-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 bg-muted text-foreground flex size-10 shrink-0 items-center justify-center rounded-lg [&_svg:not([class*='size-'])]:size-6"[39m
+                    [33mdata-slot[39m=[32m"empty-icon"[39m
+                    [33mdata-variant[39m=[32m"icon"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-shopping-cart size-8"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"24"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"24"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<circle[39m
+                        [33mcx[39m=[32m"8"[39m
+                        [33mcy[39m=[32m"21"[39m
+                        [33mr[39m=[32m"1"[39m
+                      [36m/>[39m
+                      [36m<circle[39m
+                        [33mcx[39m=[32m"19"[39m
+                        [33mcy[39m=[32m"21"[39m
+                        [33mr[39m=[32m"1"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"text-lg font-medium tracking-tight text-ct-text"[39m
+                    [33mdata-slot[39m=[32m"empty-title"[39m
+                  [36m>[39m
+                    [0mYour cart is empty.[0m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"text-muted-foreground [&>a:hover]:text-primary text-sm/relaxed [&>a]:underline [&>a]:underline-offset-4"[39m
+                    [33mdata-slot[39m=[32m"empty-description"[39m
+                  [36m>[39m
+                    [0mAdd compatible parts from the inventory explorer before you can place a wholesale order.[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance"[39m
+                  [33mdata-slot[39m=[32m"empty-content"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex flex-wrap justify-center gap-3"[39m
+                  [36m>[39m
+                    [36m<a[39m
+                      [33mclass[39m=[32m"btn-primary"[39m
+                      [33mhref[39m=[32m"/inventory"[39m
+                    [36m>[39m
+                      [0mReturn to Explorer[0m
+                    [36m</a>[39m
+                    [36m<a[39m
+                      [33mclass[39m=[32m"btn-secondary"[39m
+                      [33mhref[39m=[32m"/quote"[39m
+                    [36m>[39m
+                      [0mBuild a Quote[0m
+                    [36m</a>[39m
+                  [36m</div>[39m
+                [36m</di...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/checkout-section.test.tsx:17:19
+     15|     render(<CheckoutSection />);
+     16| 
+     17|     expect(screen.getByText(/Your cart is empty\./i)).toBeInTheDocumen…
+       |                   ^
+     18|     expect(screen.getByRole("link", { name: "Back to explorer" })).toH…
+     19|       "href",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/checkout-section.test.tsx > checkout section > renders subtotal and cart totals from store state
+TestingLibraryElementError: Unable to find an element with the text: /5 units staged/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"pt-24 pb-20"[39m
+    [36m>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"pt-24 pb-12 lg:pt-28 lg:pb-14"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto px-6 lg:px-12"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-6"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"max-w-3xl"[39m
+            [36m>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-micro text-ct-accent mb-3"[39m
+              [36m>[39m
+                [0mCheckout[0m
+              [36m</p>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"heading-display text-3xl sm:text-4xl lg:text-5xl text-ct-text"[39m
+              [36m>[39m
+                [0mLOCK IN THE [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-ct-accent"[39m
+                [36m>[39m
+                  [0mORDER[0m
+                [36m</span>[39m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"mt-4 text-sm lg:text-base text-ct-text-secondary max-w-2xl"[39m
+              [36m>[39m
+                [0mReview quantities, capture shipping details, and confirm a clean order without leaving the storefront flow.[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"btn-secondary"[39m
+                [33mhref[39m=[32m"/inventory"[39m
+              [36m>[39m
+                [0mBack to explorer[0m
+              [36m</a>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"btn-primary"[39m
+                [33mhref[39m=[32m"/quote"[39m
+              [36m>[39m
+                [0mQuote instead[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto px-6 lg:px-12"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid gap-6 xl:grid-cols-[1.05fr_0.95fr]"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"space-y-6"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"dashboard-card p-6"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-6 items-start"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"max-w-3xl"[39m
+                [36m>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-micro text-ct-accent mb-3"[39m
+                  [36m>[39m
+                    [0mCart review[0m
+                  [36m</p>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"heading-display text-3xl sm:text-4xl lg:text-5xl text-ct-text"[39m
+                  [36m>[39m
+                    [0m5 units in the order[0m
+                  [36m</h1>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"mt-4 text-sm lg:text-base text-ct-text-secondary max-w-2xl"[39m
+                  [36m>[39m
+                    [0mMOQ is enforced locally and quantities can be adjusted before submission.[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"mt-6 space-y-4"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"rounded-2xl border border-white/10 bg-ct-bg-secondary/40 p-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"flex min-w-0 items-start gap-3"[39m
+                    [36m>[39m
+                      [36m<img[39m
+                        [33malt[39m=[32m"Display"[39m
+                        [33mclass[39m=[32m"h-16 w-16 rounded-lg border border-white/10 object-cover"[39m
+                        [33msrc[39m=[32m"/x.jpg"[39m
+                      [36m/>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"min-w-0"[39m
+                      [36m>[39m
+                        [36m<p[39m
+                          [33mclass[39m=[32m"text-sm font-medium text-ct-text"[39m
+                        [36m>[39m
+                          [0mDisplay[0m
+                        [36m</p>[39m
+                        [36m<p[39m
+                          [33mclass[39m=[32m"mt-1 font-mono text-xs text-ct-text-secondary"[39m
+                        [36m>[39m
+                          [0mSKU-1[0m
+                        [36m</p>[39m
+                        [36m<p[39m
+                          [33mclass[39m=[32m"mt-2 text-xs text-ct-text-secondary"[39m
+                        [36m>[39m
+                          [0mMOQ [0m
+                          [0m5[0m
+                          [0m · Wholesale part[0m
+                        [36m</p>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"flex items-center gap-2"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33maria-label[39m=[32m"Decrease Display"[39m
+                        [33mclass[39m=[32m"h-9 w-9 rounded-md border border-white/10 text-ct-text-secondary disabled:cursor-not-allowed disabled:opacity-30"[39m
+                        [33mdisabled[39m=[32m""[39m
+                        [33mtype[39m=[32m"button"[39m
+                      [36m>[39m
+                        [0m−[0m
+                      [36m</button>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"w-16 text-center font-mono text-sm text-ct-text"[39m
+                      [36m>[39m
+                        [0m5[0m
+                      [36m</span>[39m
+                      [36m<button[39m
+                        [33maria-label[39m=[32m"Increase Display"[39m
+                        [33mclass[39m=[32m"h-9 w-9 rounded-md border border-white/10 text-ct-text-secondary"[39m
+                        [33mtype[39m=[32m"button"[39m
+                      [36m>[39m
+                        [0m+[0m
+                      [36m</button>[39m
+                      [36m<button[39m
+                        [33maria-labe...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ tests/checkout-section.test.tsx:38:19
+     36|     expect(screen.getAllByText(/\$62\.50/).length).toBeGreaterThan(0);
+     37|     expect(screen.getByText(/\$85\.03/)).toBeInTheDocument();
+     38|     expect(screen.getByText(/5 units staged/i)).toBeInTheDocument();
+       |                   ^
+     39|   });
+     40| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/device-explorer.test.tsx > device explorer > drills into a variant and fetches compatible parts
+TestingLibraryElementError: Found multiple elements with the text: iPhone
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0miPhone[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"font-medium text-ct-text"[39m
+[36m>[39m
+  [0miPhone[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-full h-full bg-ct-bg text-ct-text"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"sticky top-0 z-10 border-b border-ct-text/10 bg-ct-bg/95 backdrop-blur-sm p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"max-w-7xl mx-auto"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 size-4 text-ct-text-secondary"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive pl-10 bg-ct-bg-secondary border-ct-text/10 text-ct-text placeholder:text-ct-text-secondary focus-visible:border-ct-accent focus-visible:ring-ct-accent/20"[39m
+              [33mdata-slot[39m=[32m"input"[39m
+              [33mplaceholder[39m=[32m"Search brands, models, generations, variants..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"max-w-7xl mx-auto p-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-6"[39m
+        [36m>[39m
+          [36m<nav[39m
+            [33maria-label[39m=[32m"breadcrumb"[39m
+            [33mdata-slot[39m=[32m"breadcrumb"[39m
+          [36m>[39m
+            [36m<ol[39m
+              [33mclass[39m=[32m"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5"[39m
+              [33mdata-slot[39m=[32m"breadcrumb-list"[39m
+            [36m>[39m
+              [36m<li[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5"[39m
+                [33mdata-slot[39m=[32m"breadcrumb-item"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"cursor-pointer text-ct-text-secondary hover:text-ct-accent transition-colors"[39m
+                  [33mdata-slot[39m=[32m"breadcrumb-link"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</a>[39m
+              [36m</li>[39m
+            [36m</ol>[39m
+          [36m</nav>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-lg font-semibold text-ct-text"[39m
+            [36m>[39m
+              [0mSelect Model Type[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 overflow-y-auto max-h-96 md:max-h-full"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"w-full text-left px-4 py-3 rounded-lg bg-ct-bg-secondary border border-ct-text/10 hover:border-ct-accent hover:bg-ct-bg-secondary/80 text-ct-text transition-all group flex items-center justify-between"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0miPhone[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-right size-4 text-ct-text-secondary group-hover:text-ct-accent transition-colors"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m9 18 6-6-6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[>svg]:px-3 w-full border-ct-text/10 text-ct-text hover:border-ct-accent hover:bg-ct-bg-secondary"[39m
+              [33mdata-size[39m=[32m"default"[39m
+              [33mdata-slot[39m=[32m"button"[39m
+              [33mdata-variant[39m=[32m"outline"[39m
+            [36m>[39m
+              [0m← Back[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col gap-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-ct-bg-secondary border-ct-text/10"[39m
+              [33mdata-slot[39m=[32m"card"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"[39m
+                [33mdata-slot[39m=[32m"card-header"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"leading-none font-semibold text-ct-accent"[39m
+                  [33mdata-slot[39m=[32m"card-title"[39m
+                [36m>[39m
+                  [0mApple[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-muted-foreground text-sm"[39m
+                  [33mdata-slot[39m=[32m"card-description"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m model type[0m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"px-6 space-y-4"[39m
+                [33mdata-slot[39m=[32m"card-content"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid grid-cols-2 gap-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"p-3 rounded-lg bg-ct-bg/50 border border-ct-text/10 text-sm text-ct-text-secondary"[39m
+                  [36m>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"font-medium text-ct-text"[39m
+                    [36m>[39m
+                      [0miPhone[0m
+                    [36m</p>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs text-ct-text-secondary/75"[39m
+                    [36m>[39m
+                      [0m1[0m
+                      [0m generation[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/device-explorer.test.tsx:91:18
+     89| 
+     90|     await userEvent.click(await screen.findByRole("button", { name: "A…
+     91|     await screen.findByText("iPhone");
+       |                  ^
+     92|     await userEvent.click(screen.getByText("iPhone"));
+     93|     await screen.findByText(/14 Series/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  3 failed | 13 passed (16)
+   Start at  05:47:22
+   Duration  9.09s (transform 1.15s, setup 2.68s, collect 3.86s, tests 4.51s, environment 6.75s, prepare 1.64s)
+
+
+EXIT:1

@@ -1,0 +1,353 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum QualityGrade {
+  OEM
+  Premium
+  Aftermarket
+  U  // Unknown
+  NA // Not Applicable
+}
+
+enum Role {
+  BUYER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum QuoteRequestStatus {
+  RECEIVED
+  REVIEWING
+  RESPONDED
+  CLOSED
+}
+
+enum EventSeverity {
+  INFO
+  WARN
+  ERROR
+  CRITICAL
+}
+
+enum EventCategory {
+  SYSTEM
+  COMMERCE
+  AUTH
+  PERFORMANCE
+  INVENTORY
+}
+
+enum AlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+  SILENCED
+}
+
+// -----------------------------------------------------------------------------
+// USER & AUTHENTICATION (Clerk + Guest Identity)
+// -----------------------------------------------------------------------------
+// clerkId is nullable to support guest checkout users.
+// externalId is an alias stored for Clerk compatibility.
+// customId stores the guest ID sequence (e.g., "userid-g00123").
+// isGuest distinguishes temporary from permanent accounts.
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String?  @unique // Maps to Clerk user.id — nullable for guests
+  email     String   @unique
+  name      String?
+  role      Role     @default(BUYER)
+  company   String?
+  phone     String?
+  customId  String?  @unique // Guest ID format: userid-g00123
+  isGuest   Boolean  @default(false)
+
+  carts         Cart[]
+  orders        Order[]
+  quoteRequests QuoteRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Guest ID counter — resettable by updating count to 0
+model SystemCounter {
+  id    String @id @default("guest_id")
+  count Int    @default(0)
+}
+
+// -----------------------------------------------------------------------------
+// 4-LEVEL DEVICE HIERARCHY
+// -----------------------------------------------------------------------------
+
+model Brand {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  modelTypes ModelType[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model ModelType {
+  id          String       @id @default(cuid())
+  brandId     String
+  name        String
+  brand       Brand        @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  generations Generation[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([brandId, name])
+}
+
+model Generation {
+  id          String    @id @default(cuid())
+  modelTypeId String
+  name        String
+  releaseYear Int?
+  modelType   ModelType @relation(fields: [modelTypeId], references: [id], onDelete: Cascade)
+  variants    Variant[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([modelTypeId, name])
+}
+
+model Variant {
+  id             String           @id @default(cuid())
+  generationId   String
+  modelNumber    String?          @unique // e.g., "A3089" — nullable for seeded variants without model numbers
+  marketingName  String           // e.g., "iPhone 15 Pro Max"
+  generation     Generation       @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  compatibilities CompatibilityMap[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([generationId, marketingName])
+}
+
+// -----------------------------------------------------------------------------
+// CATALOG
+// -----------------------------------------------------------------------------
+
+model Category {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  inventory Inventory[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// INVENTORY & SMART SKUs
+// -----------------------------------------------------------------------------
+// skuId IS the primary key — Smart SKU format: [Bucket]-[Subcategory]-[Grade]-[Device]
+// wholesalePrice stored in cents (Int). 0 = "Contact for Price".
+// stockLevel replaces the legacy "quantity" field.
+
+model Inventory {
+  skuId          String           @id // Smart SKU is the PK
+  partName       String           // Strictly required — no longer nullable
+  categoryId     String
+  category       Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  wholesalePrice Int              @default(0) // Cents. 0 triggers "Contact for Price"
+  qualityGrade   QualityGrade     @default(NA)
+  stockLevel     Int              @default(0)
+
+  specifications  Specification[]
+  compatibilities CompatibilityMap[]
+  cartItems       Cart[]
+  orderLines      OrderLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+model Specification {
+  id        String    @id @default(cuid())
+  skuId     String
+  label     String    // e.g., "Capacity", "Voltage"
+  value     String    // e.g., "3227 mAh", "3.8V"
+  inventory Inventory @relation(fields: [skuId], references: [skuId], onDelete: Cascade)
+
+  @@unique([skuId, label])
+  @@index([skuId])
+}
+
+// Composite PK replaces the legacy auto-increment ID
+model CompatibilityMap {
+  skuId     String
+  variantId String
+  inventory Inventory @relation(fields: [skuId], references: [skuId], onDelete: Cascade)
+  variant   Variant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@id([skuId, variantId])
+}
+
+// -----------------------------------------------------------------------------
+// COMMERCE (Cart & Orders)
+// -----------------------------------------------------------------------------
+
+model Cart {
+  id        String    @id @default(cuid())
+  userId    String
+  skuId     String
+  quantity  Int       @default(5) // Enforces MOQ at the database level
+  addedAt   DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inventory Inventory @relation(fields: [skuId], references: [skuId], onDelete: Cascade)
+
+  @@unique([userId, skuId])
+}
+
+model Order {
+  id                    String      @id @default(cuid())
+  userId                String
+  status                OrderStatus @default(PENDING)
+  totalCents            Int         // Total in cents
+  stripePaymentIntentId String?     @unique
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lines     OrderLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model OrderLine {
+  id                   String    @id @default(cuid())
+  orderId              String
+  skuId                String
+  quantity             Int
+  unitPriceAtPurchase  Int       // Critical snapshot price in cents
+  partNameSnapshot     String?   // Snapshot of part name at purchase time
+  qualityGradeSnapshot QualityGrade? // Snapshot of quality grade at purchase
+  variantMarketingNameSnapshot String? // Snapshot of device name at purchase
+
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  inventory Inventory @relation(fields: [skuId], references: [skuId])
+
+  @@index([orderId])
+}
+
+// -----------------------------------------------------------------------------
+// QUOTE REQUESTS (RFQ System)
+// -----------------------------------------------------------------------------
+
+model QuoteRequest {
+  id          String             @id @default(cuid())
+  userId      String?
+  email       String
+  company     String?
+  contactName String?
+  phone       String?
+  notes       String
+  status      QuoteRequestStatus @default(RECEIVED)
+  user        User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       QuoteRequestItem[]
+  submittedAt DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([email])
+}
+
+model QuoteRequestItem {
+  id             String       @id @default(cuid())
+  quoteRequestId String
+  skuId          String?
+  quantity       Int?
+  note           String?
+  quoteRequest   QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([quoteRequestId])
+}
+
+// -----------------------------------------------------------------------------
+// MONITORING & OBSERVABILITY
+// -----------------------------------------------------------------------------
+
+model SystemEvent {
+  id        String        @id @default(cuid())
+  category  EventCategory
+  severity  EventSeverity
+  message   String
+  metadata  String?       // JSON string
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([category])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+model MetricSnapshot {
+  id        String   @id @default(cuid())
+  name      String
+  value     Float
+  unit      String
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([createdAt])
+}
+
+model AlertRule {
+  id                   String              @id @default(cuid())
+  name                 String              @unique
+  condition            String              // JSON string describing the condition
+  actionType           String              // "email", "slack", etc.
+  actionPayload        String              // JSON string
+  isActive             Boolean             @default(true)
+  evaluationIntervalMs Int                 @default(300000) // 5 minutes
+  notifications        AlertNotification[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model AlertNotification {
+  id             String      @id @default(cuid())
+  ruleId         String
+  status         AlertStatus @default(ACTIVE)
+  message        String
+  sentAt         DateTime?
+  acknowledgedAt DateTime?
+  resolvedAt     DateTime?
+  rule           AlertRule   @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([ruleId])
+  @@index([status])
+}

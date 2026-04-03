@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env*.local
+.env.development
+.env.production
+
+# Build outputs
+.next/
+dist/
+out/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Codex / Copilot session state
+.codex
+.codex/
+.copilot/
+.playwright-mcp/
+.squad/
+
+# Prisma engine binaries (auto-downloaded)
+backend/prisma/*.engine
+
+# Logs
+*.log
+npm-debug.log*
