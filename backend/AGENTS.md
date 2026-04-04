@@ -1,58 +1,110 @@
-# AGENTS.md — AI Agent Guidelines for `ctir-backendv1-official`
+# AGENTS.md — AI Agent Guidelines for CellTech Backend
 
 This document provides context and rules for AI coding agents (Rovo Dev, GitHub Copilot, etc.) working in this repository.
 
 ---
 
-## 🧠 Memory — Current State (Updated 2026-04-03)
+## 🧠 Memory — Current State (Updated 2026-04-04)
 
 ### Where We Are
-- **Dev server is running** on port 3001 (`npm run dev`)
-- **Database connected** to Neon PostgreSQL (pooled connection via serverless adapter)
-- **Database tables do NOT exist yet** — `prisma db push` + `prisma db seed` have NOT been run
+- **Monorepo:** This backend lives at `backend/` inside the `actor-v4` monorepo (repo: `doj-scraper/actor-v4`)
+- **Database connected:** Neon PostgreSQL — tables created (`prisma db push`), seeded (`prisma db seed`)
+- **All 52 endpoints verified** locally via curl — every route returns correct data
+- **Clerk + Stripe configured** locally — keys in `backend/.env` and `frontend/.env.local`
 - **Clerk middleware is conditional** — skips when `CLERK_SECRET_KEY` is not set (see `src/middleware/auth.ts`)
-- **dotenv added** — `import 'dotenv/config'` was added to `src/config/env.ts` to load `.env` file
-- **Redis, Clerk, Stripe** are not configured locally yet (commented out in `.env`)
-- All 53 route endpoints are wired in code (routes → services → Prisma), but nothing works end-to-end until tables exist
+- **Frontend integration complete** — API contracts aligned, prices in cents, response shapes confirmed
+- **Deployed to Vercel Services** (experimental) — single project, frontend works, **backend has a runtime issue** (see DEBUGNOTES.md)
 
-### Changes Made (This Session)
-1. Created `.env` from Vercel CTIR_* variables (mapped to standard names)
-2. Added `import 'dotenv/config'` to `src/config/env.ts`
-3. Made Clerk `authMiddleware` conditional in `src/middleware/auth.ts` — no-op when `CLERK_SECRET_KEY` is absent
+### Deployment Architecture
+The project uses **Vercel's experimental Services** feature. Both frontend and backend deploy as a single Vercel project under one domain.
 
-### Environment Variable Mapping (Vercel → Backend)
-| Vercel (CTIR_*) | Backend expects |
-|---|---|
-| `CTIR_POSTGRES_PRISMA_URL` | `DATABASE_URL` |
-| `CTIR_POSTGRES_URL_NON_POOLING` | `DIRECT_URL` |
-| (not on Vercel yet) | `CLERK_SECRET_KEY` |
-| (not on Vercel yet) | `STRIPE_SECRET_KEY` |
-| (not on Vercel yet) | `REDIS_URL` |
+**Live URL:** `actor-v4.vercel.app`
+- Frontend: `actor-v4.vercel.app/` → Next.js (working ✅)
+- Backend: `actor-v4.vercel.app/_/backend/` → Express (runtime error ❌)
 
-### Multi-Agent Setup
-- **This backend** is managed by **Claude Opus** — owns all backend code, API routes, services, database schema
-- **The frontend** is managed by **GPT-5.4** — owns all frontend code, UI, API client calls
-- This backend repo may be cloned into the frontend Codespace for local development (both on localhost)
-- If cloned into frontend workspace: the `.git` folder will be removed so git doesn't track it there
-- **Coordination rule:** Backend agent defines the API contract. Frontend agent consumes it. Neither modifies the other's code.
+**Root `vercel.json`** (at repo root, NOT in backend/):
+```json
+{
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "nextjs"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/_/backend"
+    }
+  }
+}
+```
 
-### What To Do Next (In Order)
-1. **Push schema to database:** `npx prisma db push` — creates all 13+ tables
-2. **Seed the database:** `npx prisma db seed` — populates device hierarchy, categories, sample inventory
-3. **Verify catalog endpoints work:** `GET /api/health`, `GET /api/brands`, `GET /api/hierarchy`
-4. **Add Clerk keys** to `.env` and test authenticated routes (cart, checkout, orders, users)
-5. **Add Stripe keys** to `.env` and test checkout flow
-6. **Add Redis URL** to `.env` for rate limiting and caching
-7. **Run test suite:** `npm test` — all 16 test files should pass
-8. **Frontend integration testing** — frontend dev hits live endpoints
+**How routing works:** Vercel **strips the routePrefix** before forwarding. A request to `/_/backend/api/health` arrives at Express as `/api/health`. Backend code does NOT need the prefix in route definitions.
 
-### What Should Come After
-- End-to-end checkout flow testing (guest + authenticated)
-- Admin role enforcement on monitoring endpoints
-- Alert notification delivery (email/Slack — currently rules fire but nothing sends)
-- Order fulfillment state transitions (SHIPPED/DELIVERED — currently no backend trigger)
-- Inventory reservation/hold system during checkout window
-- Production deployment verification on Vercel
+**Backend `vercel.json`** (at `backend/vercel.json`):
+```json
+{
+  "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "builds": [{ "src": "api/index.ts", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "api/index.ts" }]
+}
+```
+
+**Known issue:** Backend returns `FUNCTION_INVOCATION_FAILED` at runtime. Build succeeds. Env vars are set on the Vercel project but may not be reaching the serverless function. See `DEBUGNOTES.md` at repo root for full debugging history and suggested fixes.
+
+### Vercel Project Details
+| Field | Value |
+|-------|-------|
+| Project Name | `actor-v4` |
+| Project ID | `prj_XaazzS6wpAXcVS3ub0JRLA0rFpul` |
+| Team | `crodacroda` (`team_zrIgDvZoPlY3ZUuXc871BAmW`) |
+| Account | `cecelover010101` |
+| Framework | Services |
+| Git repo | `doj-scraper/actor-v4` (auto-deploy on push to main) |
+
+### Environment Variables on Vercel (Production)
+All 12 set via `vercel env add ... production --scope crodacroda`:
+
+| Variable | Set? |
+|----------|------|
+| `DATABASE_URL` | ✅ |
+| `DIRECT_URL` | ✅ |
+| `NODE_ENV` | ✅ (production) |
+| `JWT_SECRET` | ✅ |
+| `JWT_EXPIRES_IN` | ✅ |
+| `CORS_ORIGIN` | ✅ (https://actor-v4.vercel.app) |
+| `CLERK_PUBLISHABLE_KEY` | ✅ |
+| `CLERK_SECRET_KEY` | ✅ |
+| `STRIPE_SECRET_KEY` | ✅ |
+| `NEXT_PUBLIC_API_URL` | ✅ (/_/backend) |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | ✅ |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | ✅ |
+
+### API Contracts (Permanent)
+- **Catalog routes** use named response keys: `{ brands: [...] }`, `{ models: [...] }`, `{ parts: [...] }`, `{ hierarchy: [...] }`
+- **Commerce routes** use `{ success: boolean, data: {...} }`
+- **Cart GET** spreads data at root level (not nested under `data`)
+- **Prices** are `Int` in cents — frontend divides by 100 at display
+- **`wholesalePrice === 0`** means "Contact for Price" — never display $0.00
+
+### Documentation
+| File | Location | Purpose |
+|------|----------|---------|
+| `BACKENDREPORT.md` | repo root | 11 entries — full backend dev log |
+| `FRONTENDREPORT.md` | repo root | 8 entries — full frontend dev log |
+| `FINALREPORT.md` | repo root | Complete project case study |
+| `DEBUGNOTES.md` | repo root | Vercel backend 500 debugging notes |
+| `ARCHITECTURE.md` | repo root | System diagrams, DB schema, auth flow |
+| `README.md` | repo root | Project overview and quickstart |
+| `DEPLOYCONFIGINSTRUCT.md` | repo root | Vercel Services setup instructions |
+
+### What To Do Next
+1. **Fix backend FUNCTION_INVOCATION_FAILED** — see DEBUGNOTES.md for theories and suggested fixes
+2. **Add `actor-v4.vercel.app` to Clerk allowed origins** — required for auth on production domain
+3. **Set up Clerk webhook** pointing to `https://actor-v4.vercel.app/_/backend/api/webhooks/clerk`
+4. **Set up Stripe webhook** pointing to `https://actor-v4.vercel.app/_/backend/api/checkout/webhook`
+5. **Seed production database** with real product catalog (currently has test data)
 
 ---
 
