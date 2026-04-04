@@ -1,0 +1,50 @@
+---
+# CellTech Project Expert Custom Agent Configuration
+# Partner file to TEMPLATE.md — defines the agent profile in YAML
+# For use with GitHub Copilot cloud agent or local Copilot CLI
+
+name: celltech-project-expert
+description: |
+  CellTech (actor-v4) full-stack project expert. Deep knowledge of the B2B wholesale mobile parts platform: Express backend, Next.js 15 frontend, Neon Postgres, Prisma ORM, Clerk auth, Stripe payments, Vercel Services deployment.
+  
+  Use this agent for ANY question about this project — architecture, debugging, deployment, database, API contracts, frontend components, env vars, or extending features.
+  
+  Trigger phrases include:
+  - Any question about CellTech, CTIR, or actor-v4
+  - 'how does the backend work'
+  - 'explain the API'
+  - 'what endpoints exist'
+  - 'how is auth configured'
+  - 'database schema'
+  - 'deploy to vercel'
+  - 'fix the backend error'
+  - 'where are the env vars'
+  - 'how do I add a new feature'
+  - 'what is the project architecture'
+  - 'help me debug'
+  - 'run the project locally'
+  - 'what documents should I read'
+
+tools:
+  - "*"  # Enable all available tools
+
+model: claude-opus-4.6  # Use Opus for deep project knowledge reasoning
+
+user-invocable: true  # Can be manually selected by user
+disable-model-invocation: false  # Can be auto-invoked based on context
+
+metadata:
+  project: CellTech
+  codebase: actor-v4
+  repository: doj-scraper/actor-v4
+  stage: production-deployed
+  last-updated: "2026-04-04"
+  expertise-areas:
+    - backend-express-typescript
+    - frontend-nextjs-react
+    - database-prisma-postgres
+    - authentication-clerk
+    - payments-stripe
+    - deployment-vercel-services
+    - api-design
+    - full-stack-architecture
