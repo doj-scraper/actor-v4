@@ -37,3 +37,5 @@ backend/prisma/*.engine
 # Logs
 *.log
 npm-debug.log*
+.vercel/
+backend/.vercel/
