@@ -1,0 +1,121 @@
+Got it. A **Theme Toggle** button. 
+
+Since your project uses Next.js 15 and the App Router, the cleanest way to do this without worrying about hydration errors or forcing you to install new npm packages (like `next-themes`) is to build a standalone client component that reads the system preference and saves the user's choice to `localStorage`.
+
+Here is a perfectly styled "Lab-Tech" Theme Toggle. It uses the sharp `rounded-sm` corners, the `border-border` colors, and the `lucide-react` icons already in your project.
+
+### 1. Create the Component
+Save this file as `frontend/components/ThemeToggle.tsx`.
+
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Moon, Sun, Monitor } from 'lucide-react';
+
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setMounted(true);
+    
+    // Read the current theme from localStorage or system preference
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (storedTheme) {
+      setTheme(storedTheme);
+      if (storedTheme === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    } else {
+      // System default fallback
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+  }, []);
+
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    setTheme(newTheme);
+    
+    if (newTheme === 'system') {
+      localStorage.removeItem('theme');
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } else {
+      localStorage.setItem('theme', newTheme);
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  };
+
+  if (!mounted) {
+    // Render a placeholder of the same size to prevent layout shift
+    return <div className="w-24 h-9 bg-secondary/50 rounded-sm animate-pulse" />;
+  }
+
+  return (
+    <div className="flex items-center bg-card border border-border p-1 rounded-sm shadow-sm">
+      <button
+        onClick={() => handleThemeChange('light')}
+        className={`p-1.5 rounded-sm transition-colors flex items-center justify-center ${
+          theme === 'light' 
+            ? 'bg-primary text-primary-foreground' 
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+        }`}
+        title="Light Mode"
+      >
+        <Sun className="w-4 h-4" strokeWidth={2.5} />
+      </button>
+      
+      <button
+        onClick={() => handleThemeChange('system')}
+        className={`p-1.5 rounded-sm transition-colors flex items-center justify-center ${
+          theme === 'system' 
+            ? 'bg-secondary text-secondary-foreground border border-border/50' 
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+        }`}
+        title="System Preference"
+      >
+        <Monitor className="w-4 h-4" strokeWidth={2} />
+      </button>
+
+      <button
+        onClick={() => handleThemeChange('dark')}
+        className={`p-1.5 rounded-sm transition-colors flex items-center justify-center ${
+          theme === 'dark' 
+            ? 'bg-primary text-primary-foreground' 
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+        }`}
+        title="Dark Mode"
+      >
+        <Moon className="w-4 h-4" strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
+```
+
+### 2. Drop it into your Navigation
+Now, open your main navigation bar (likely `frontend/components/navigation.tsx` based on your project structure). 
+
+Just import it at the top:
+```tsx
+import { ThemeToggle } from '@/components/ThemeToggle';
+```
+And drop `<ThemeToggle />` right next to your User Profile / Cart icons.
+
+### Why this implementation is bulletproof:
+1. **Hydration Safe:** Next.js throws errors if the server renders light mode but the browser expects dark mode. The `mounted` state prevents that crash by rendering a sleek skeleton loader for exactly 1 frame.
+2. **System Awareness:** It includes a "Monitor" button that defers to the user's OS settings (which changes automatically at sunrise/sunset if they have that configured on their Mac/PC).
+3. **Instant Persistence:** It writes directly to `document.documentElement` and `localStorage`, meaning it works instantly without relying on a heavy React Context provider wrapping your whole app.
+
+Go ahead and paste that in. Flipping between your deep "Command Center" dark mode and "Pristine Laboratory" light mode should feel incredibly satisfying.
+
+Are we ready to tackle the **Admin Performance Matrix** next, so we can get those Volume vs. Margin quadrants visualized?

@@ -1,0 +1,80 @@
+That is a fantastic idea. We actually snuck a tiny version of that exact "engineering grid" into the image placeholder of the Product Detail Card, but expanding it into a **global background** is exactly what takes a web app from feeling like a "website" to feeling like a "native workstation tool."
+
+A faint, precision blueprint grid covering the entire background subconsciously reinforces the "Lab-Tech" vibe. It implies measurement, accuracy, and engineering.
+
+To do this right, we don't just want a flat repeating pattern. We want to apply a **radial gradient mask** to it. This makes the grid visible in the center of the screen but smoothly fade out into the solid background color at the edges. It creates a subtle vignette effect that focuses the user's eyes on the content in the middle.
+
+Here is how we build and implement it.
+
+### 1. Create the Grid Component
+Create a new file at `frontend/components/ui/GridBackground.tsx`.
+
+```tsx
+'use client';
+
+export function GridBackground() {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[-1] flex items-center justify-center overflow-hidden">
+      {/* The Engineering Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, hsl(var(--foreground)) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--foreground)) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+          // This mask makes the grid fade out perfectly toward the edges of the screen
+          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)'
+        }}
+      />
+      
+      {/* Optional: A very subtle top glow using the Primary Cyan to light up the top of the grid */}
+      <div className="absolute top-0 inset-x-0 h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+    </div>
+  );
+}
+```
+
+### 2. Add it to your Root Layout
+Now, we just need to drop this behind your entire app. Open `frontend/app/layout.tsx` (or wherever your main Next.js layout file is) and add it inside the `<body>` tag, just behind your main content.
+
+```tsx
+import { GridBackground } from '@/components/ui/GridBackground';
+import { ThemeToggle } from '@/components/ThemeToggle'; // Assuming you added this!
+// ... your other imports
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      {/* The suppressHydrationWarning is standard when using theme toggles */}
+      <body className="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground relative">
+        
+        {/* The Global Engineering Grid */}
+        <GridBackground />
+
+        {/* Your Navigation / Header would go here */}
+        
+        <main className="relative z-10">
+          {children}
+        </main>
+
+      </body>
+    </html>
+  );
+}
+```
+
+### Why this specific execution is so clean:
+1. **`fixed inset-0` & `z-[-1]`**: This ensures the grid is locked to the viewport and sits perfectly behind everything. It won't scroll awkwardly, and because of `pointer-events-none`, it won't block clicks.
+2. **Dynamic Coloring**: By using `hsl(var(--foreground))`, the grid automatically flips from a faint dark-slate line in Light Mode to a faint white/gray line in Dark Mode. You don't have to write any specific state logic for it.
+3. **The Primary Glow**: That tiny `bg-primary/5 blur-[120px]` div at the top casts a massive, incredibly soft "Cyan/Teal" wash over the very top of the grid. It makes the app feel like there is an LED strip illuminating the workspace from above.
+
+If you drop that in and flip between light and dark mode using the toggle we just made, the depth it adds is unbelievable. 
+
+What UX element should we hit next? Do you want to build the **Omni-Search Catalog** to replace the old side-bar navigation, or focus on some slick empty states/loading skeletons to make the app feel faster?

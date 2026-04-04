@@ -3,6 +3,7 @@ import { Sora, Inter, IBM_Plex_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/auth-provider";
 import { Navigation } from "@/components/navigation";
 import { FooterSection } from "@/components/footer-section";
+import { GridBackground } from "@/components/ui/GridBackground";
 import "./globals.css";
 
 const sora = Sora({
@@ -48,12 +49,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${sora.variable} ${inter.variable} ${ibmPlexMono.variable}`}>
-      <body className="antialiased">
+    <html lang="en" className={`${sora.variable} ${inter.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+      <body className="antialiased min-h-screen relative selection:bg-primary selection:text-primary-foreground">
         <AuthProvider>
-          <div className="flex flex-col min-h-screen bg-ct-bg">
+          <div className="flex flex-col min-h-screen">
+            <GridBackground />
             <Navigation />
-            <main className="flex-1">
+            <main className="flex-1 relative z-10">
               {children}
             </main>
             <FooterSection />

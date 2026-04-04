@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { CartBadge } from "@/components/cart-badge";
 import { CartDrawer } from "@/components/cart-drawer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 
@@ -55,17 +56,17 @@ export function Navigation() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-ct-bg/90 backdrop-blur-md border-b border-white/5"
+            ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
             : "bg-transparent"
         }`}
       >
         <div className="w-full px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-ct-accent flex items-center justify-center">
-                <span className="text-ct-bg font-bold text-sm">CT</span>
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">CT</span>
               </div>
-              <span className="font-display font-bold text-ct-text tracking-wide">
+              <span className="font-display font-bold text-foreground tracking-wide">
                 CellTech
               </span>
             </Link>
@@ -92,8 +93,10 @@ export function Navigation() {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
+              
               <button
-                className="flex items-center gap-2 text-sm text-ct-text-secondary hover:text-ct-text transition-colors"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsCartOpen(true)}
                 type="button"
               >
@@ -103,7 +106,7 @@ export function Navigation() {
 
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-sm text-ct-text-secondary hover:text-ct-text transition-colors"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <User className="w-4 h-4" />
                 <span>{isLoggedIn ? user?.name ?? "Account" : "Sign in"}</span>
@@ -111,7 +114,7 @@ export function Navigation() {
             </div>
 
             <button
-              className="md:hidden text-ct-text"
+              className="md:hidden text-foreground"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               type="button"
             >
@@ -125,7 +128,7 @@ export function Navigation() {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-ct-bg/95 backdrop-blur-md border-t border-white/5">
+          <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border">
             <div className="px-6 py-4 space-y-4">
               <Link
                 href="/catalog"
@@ -169,27 +172,30 @@ export function Navigation() {
               >
                 Account
               </Link>
-              <div className="pt-4 border-t border-white/10 flex items-center gap-6">
-                <button
-                  className="flex items-center gap-2 text-sm text-ct-text-secondary"
-                  onClick={() => {
-                    setIsCartOpen(true);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  type="button"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  <span>Cart</span>
-                  <CartBadge count={cartCount} showIcon={false} className="px-2 py-0.5" />
-                </button>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 text-sm text-ct-text-secondary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <User className="w-4 h-4" />
-                  <span>{isLoggedIn ? user?.name ?? "Account" : "Sign in"}</span>
-                </Link>
+              <div className="pt-4 border-t border-border flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                  <button
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                    onClick={() => {
+                      setIsCartOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    type="button"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    <span>Cart</span>
+                    <CartBadge count={cartCount} showIcon={false} className="px-2 py-0.5" />
+                  </button>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    <span>{isLoggedIn ? user?.name ?? "Account" : "Sign in"}</span>
+                  </Link>
+                </div>
+                <ThemeToggle />
               </div>
             </div>
           </div>

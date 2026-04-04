@@ -1,0 +1,109 @@
+This is the final piece of the puzzle for the **Omni-Search Catalog**. Since this is a B2B platform, our "Add to Cart" button needs to be smarter than a standard Shopify store. 
+
+We need to enforce Minimum Order Quantities (MOQs), prevent users from adding more stock than you actually have, and trigger a satisfying visual confirmation (a Toast) so they can keep rapid-fire clicking down the list without leaving the page.
+
+Here is exactly how we wire the catalog into your existing Zustand `cartStore`.
+
+### 1. The Zustand Store Check
+First, let's make sure your `frontend/store/cartStore.ts` matches the strict data contracts we established in your `BACKENDREPORT.md`. Your backend expects `skuId`, `quantity`, and `wholesalePrice` (in cents). 
+
+If you haven't fully fleshed out your Zustand store yet, it should look something like this:
+
+```typescript
+// frontend/store/cartStore.ts
+import { create } from 'zustand';
+
+export interface CartItem {
+  skuId: string;
+  partName: string;
+  wholesalePrice: number; // Stored in cents!
+  quantity: number;
+}
+
+interface CartStore {
+  items: CartItem[];
+  addItem: (item: CartItem, maxStock: number) => void;
+  // ... other methods (removeItem, clearCart, etc.)
+}
+
+export const useCartStore = create<CartStore>((set) => ({
+  items: [],
+  addItem: (newItem, maxStock) => set((state) => {
+    const existingItem = state.items.find(i => i.skuId === newItem.skuId);
+    
+    if (existingItem) {
+      // Prevent adding more than what's physically in the warehouse
+      const newQuantity = Math.min(existingItem.quantity + newItem.quantity, maxStock);
+      return {
+        items: state.items.map(i => 
+          i.skuId === newItem.skuId ? { ...i, quantity: newQuantity } : i
+        )
+      };
+    }
+    return { items: [...state.items, newItem] };
+  }),
+}));
+```
+
+### 2. Update the Omni-Search Catalog
+Now, open up your `frontend/app/catalog/page.tsx` that we just built. We are going to import your store, write the rapid-fire add handler, and update the button.
+
+**Step A: Add the imports at the very top:**
+```tsx
+// Add these to your existing imports
+import { useCartStore } from '@/store/cartStore';
+import { toast } from 'sonner'; // Assuming you use Sonner for toasts (standard with shadcn/ui)
+```
+
+**Step B: Add the logic inside your `OmniCatalogPage` component:**
+```tsx
+export default function OmniCatalogPage() {
+  // ... existing state (activeBrand, searchQuery, parts, isLoading)
+
+  // 1. Pull the addItem function from your Zustand store
+  const addToCart = useCartStore((state) => state.addItem);
+
+  // 2. The Rapid-Fire B2B Add Handler
+  const handleAddToCart = (part: InventoryItem) => {
+    // Default B2B MOQ is 5. If stock is less than 5, just add whatever is left.
+    const defaultMoq = 5;
+    const quantityToAdd = Math.min(defaultMoq, part.stockLevel);
+
+    addToCart({
+      skuId: part.skuId,
+      partName: part.partName,
+      wholesalePrice: part.wholesalePrice,
+      quantity: quantityToAdd
+    }, part.stockLevel);
+
+    // 3. Fire the satisfying lab-tech notification
+    toast.success(`Added to Cart`, {
+      description: `${quantityToAdd}x ${part.skuId} queued for checkout.`,
+      // Custom styling to match your deep Command Center theme
+      className: "bg-card border-border text-foreground font-mono",
+    });
+  };
+
+  // ... rest of your useEffect and useMemo logic
+```
+
+**Step C: Update the Button in the Grid:**
+Scroll down to the bottom of the `filteredParts.map` loop and replace the old `<button>` with this wired-up version:
+
+```tsx
+<button 
+  disabled={part.stockLevel === 0}
+  onClick={() => handleAddToCart(part)}
+  className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded-sm flex items-center gap-2 active:scale-95"
+>
+  <ShoppingCart className="w-3 h-3" />
+  Add
+</button>
+```
+
+### Why this setup is elite for wholesale:
+1. **The `active:scale-95` Tailwind class:** I added this to the button. It gives a tiny, satisfying "click" depression animation. When a warehouse buyer is rapidly clicking "Add" down a list of 20 batteries, that tactile visual feedback is crucial.
+2. **Auto-MOQ Handling:** The handler automatically attempts to add 5 units (a standard wholesale minimum), but intelligently falls back to the exact stock limit if you only have 3 left in the warehouse.
+3. **No Page Reloads:** Because it uses Zustand, the cart icon in your navigation bar will instantly update its counter without the page ever flashing or losing the user's active search query.
+
+With the Catalog fully operational, visually deep, and wired to your cart, what is our next target? Do we pivot to the **Admin Performance Matrix** to visualize your profit margins, or tackle that **Vercel 500 Deployment Bug** so you can show this off to the world?

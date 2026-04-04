@@ -1,0 +1,161 @@
+Let's put on the DevOps hat and kill this final boss. 
+
+The `FUNCTION_INVOCATION_FAILED` (HTTP 500) error on Vercel when using an Express backend is almost always caused by one of two things: a **routing conflict** between your config files, or a **cold-start crash** caused by your Zod environment validation.
+
+Because you are using Vercel's experimental **Services** architecture (monorepo), the root `vercel.json` and the `backend/vercel.json` are fighting each other for control over the routes.
+
+Here is the exact 3-step surgical strike to fix this.
+
+### Step 1: Strip down `backend/vercel.json`
+Right now, your `backend/vercel.json` is using legacy `@vercel/node` routing arrays (`builds` and `routes`). In "Services" mode, the root `vercel.json` is already handling the routing, so this inner file is causing an infinite routing loop or failing to map the function correctly.
+
+Replace everything in `backend/vercel.json` with just this:
+
+```json
+{
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install"
+}
+```
+*Note: We completely removed the `builds` and `routes` arrays. Vercel Services will now automatically look for `api/index.ts`.*
+
+### Step 2: Update Root `vercel.json`
+Your root `vercel.json` needs to explicitly tell Vercel that the backend is a Node/Express app, otherwise it doesn't know how to invoke the serverless function.
+
+Update your root `vercel.json` to this:
+
+```json
+{
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "nextjs"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/_/backend",
+      "framework": "express"
+    }
+  }
+}
+```
+
+### Step 3: Prevent the Zod "Silent Crash"
+In `backend/src/config/env.ts`, you are using Zod to validate your environment variables. If a variable like `JWT_SECRET` is missing or too short in Vercel's production environment, **Zod will instantly crash the serverless function on cold start** before Express even boots up. Vercel registers this crash as a generic 500 `FUNCTION_INVOCATION_FAILED`.
+
+To prove if this is happening, we need to make your entry point catch the crash and print it. 
+
+Update your `backend/api/index.ts` to this:
+
+```typescript
+import { createApp } from '../src/app.js';
+
+let app;
+
+try {
+  // If env.ts fails validation here, we will catch it!
+  app = createApp();
+} catch (error) {
+  console.error("🔥 CRITICAL COLD START CRASH:", error);
+  
+  // Create a dummy Express app just to serve the exact error to the browser
+  const express = require('express');
+  app = express();
+  app.all('*', (req, res) => {
+    res.status(500).json({
+      success: false,
+      error: "Server failed to boot",
+      details: error instanceof Error ? error.message : "Unknown error",
+      hint: "Check Vercel Runtime Logs for Zod Env Validation errors"
+    });
+  });
+}
+
+export default app;
+```
+
+### The Deployment Execution
+1. Save those three files.
+2. Push them to your GitHub repository.
+3. Watch the Vercel deployment.
+
+If it works, your backend will instantly come alive. 
+If it *still* fails, Step 3 will now physically print the exact missing environment variable (e.g., `"DATABASE_URL is missing"`) to your browser screen when you go to `actor-v4.vercel.app/_/backend/api/health` instead of giving you a blank 500 error.
+
+Push those config updates and let me know what the browser says!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////
+
+
+
+
+The `FUNCTION_INVOCATION_FAILED` 500 error is occurring because the project-level environment variables are not reaching the backend serverless function at runtime. The validation in `backend/src/config/env.ts` fails and crashes the invocation.
+
+This happens because the legacy `builds` and `routes` arrays in the `backend/vercel.json` file are conflicting with the new `experimentalServices` monorepo configuration in the root `vercel.json`. Vercel Services handles routing and bundling automatically; manually defining the `@vercel/node` builder creates an isolated function bundle that loses the service-level environment context.
+
+Here is exactly how to fix it:
+
+### 1. Update `backend/vercel.json`
+Remove the legacy `builds` and `routes` arrays. Keep only the build configuration so Vercel Services can handle the routing natively. 
+
+Change it to exactly this:
+```json
+{
+  "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install"
+}
+```
+
+### 2. Update the root `vercel.json`
+Explicitly define the backend framework as Express. This tells the Vercel Services engine how to properly package the entry point and inject the project environment variables.
+
+Change it to:
+```json
+{
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "nextjs"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/_/backend",
+      "framework": "express"
+    }
+  }
+}
+```
+
+### 3. Prevent hard crashes in `backend/src/config/env.ts`
+Currently, if validation fails, the script calls `process.exit(1)`. In a serverless environment, exiting the process abruptly causes the opaque `FUNCTION_INVOCATION_FAILED` error. Throwing a standard error instead will ensure Vercel catches it and logs the actual missing variables to the runtime console.
+
+In `backend/src/config/env.ts`, locate the error handling block (around line 28) and update it:
+
+```typescript
+if (!result.success) {
+    const errorMsg = '❌ Invalid environment variables: ' + JSON.stringify(result.error.format());
+    console.error(errorMsg);
+    // Replace process.exit(1) with a thrown Error
+    throw new Error(errorMsg);
+}
+```
+
+### Next Steps
+Once these changes are committed and pushed, Vercel will trigger a new build. The backend service will deploy using the native Express framework preset, which correctly links the project-scoped environment variables (`DATABASE_URL`, `CLERK_SECRET_KEY`, etc.) to the runtime environment, resolving the 500 errors.

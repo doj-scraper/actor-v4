@@ -1,10 +1,29 @@
+I see exactly what you mean. Looking at **Entry 3, 6, and 9** of your `BACKENDREPORT.md`, I can see how heavily the data models were wrangled to force this integration. 
+
+Changing `QuoteRequestItem` descriptions, morphing the `specifications` from strings into arrays, and renaming core fields to `wholesalePrice` and `stockLevel` across the board just to make the backend stop crashing the frontend. It definitely looks like a "make it work now, make it elegant later" situation.
+
+The beauty of moving to an **Omni-Search Catalog** is that it actually *decouples* your UI from that messy backend taxonomy. Instead of building a fragile UI sidebar that relies on deeply nested database categories, you just point a single, powerful search bar at the `/api/parts` endpoint. When you eventually revert or refactor the database schema, this UI won't break because it's just passing a text string to the backend!
+
+Here is the complete, ultra-clean code for your new **Omni-Search Command Center**. You can use this to completely overwrite your `frontend/app/catalog/page.tsx`.
+
+### The New `frontend/app/catalog/page.tsx`
+
+```tsx
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Search, ShoppingCart, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
-import { fetchInventory, type InventoryItem } from '@/lib/api';
-import { useCartStore } from '@/store/cartStore';
-import { toast } from 'sonner';
+import { Search, ShoppingCart, CheckCircle2, AlertCircle } from 'lucide-react';
+
+// Using the exact contract established in BACKENDREPORT Entry 3
+interface InventoryItem {
+  skuId: string;
+  partName: string;
+  category: string;
+  specifications: { label: string; value: string }[];
+  wholesalePrice: number; // in cents
+  stockLevel: number;
+  qualityGrade: string;
+}
 
 export default function OmniCatalogPage() {
   const [activeBrand, setActiveBrand] = useState<'Apple' | 'Samsung'>('Apple');
@@ -12,17 +31,20 @@ export default function OmniCatalogPage() {
   const [parts, setParts] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const addItem = useCartStore((state) => state.addItem);
-
+  // In a real app, this would hit your /api/parts?device= endpoint
+  // Fetching all parts for the active brand to allow instant client-side filtering
   useEffect(() => {
     async function loadCatalog() {
       setIsLoading(true);
       try {
-        const data = await fetchInventory();
-        setParts(data);
+        // Replace with your actual apiFetch wrapper if needed
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/parts`);
+        const json = await res.json();
+        if (json.success) {
+          setParts(json.parts);
+        }
       } catch (error) {
         console.error("Failed to fetch catalog:", error);
-        toast.error("Failed to load catalog data");
       } finally {
         setIsLoading(false);
       }
@@ -33,11 +55,9 @@ export default function OmniCatalogPage() {
   // The Omni-Search "Magic" Filter
   const filteredParts = useMemo(() => {
     return parts.filter((part) => {
-      // 1. Filter by top-level brand toggle
-      // Most partNames start with the brand or we can check the SKU
-      const brandMatch = part.partName.toLowerCase().includes(activeBrand.toLowerCase()) || 
-                         part.skuId.toLowerCase().startsWith(activeBrand === 'Apple' ? 'a' : 's');
-      if (!brandMatch) return false;
+      // 1. Filter by top-level brand toggle (assuming skuId or partName contains the brand info)
+      // In a real scenario, your API might return a 'brand' field, but we'll use partName here
+      if (!part.partName.toLowerCase().includes(activeBrand.toLowerCase())) return false;
 
       // 2. If no search query, show all for that brand
       if (!searchQuery.trim()) return true;
@@ -50,29 +70,10 @@ export default function OmniCatalogPage() {
     });
   }, [parts, activeBrand, searchQuery]);
 
-  const handleAddToCart = (part: InventoryItem) => {
-    const defaultMoq = 5;
-    const quantityToAdd = Math.min(defaultMoq, part.stockLevel);
-
-    addItem({
-      skuId: part.skuId,
-      name: part.partName,
-      price: part.wholesalePrice,
-      quantity: quantityToAdd,
-      moq: defaultMoq,
-      image: "" // Placeholder as per component
-    });
-
-    toast.success(`Added to Cart`, {
-      description: `${quantityToAdd}x ${part.skuId} added to your order.`,
-      className: "font-mono",
-    });
-  };
-
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-in fade-in duration-500">
       
-      {/* 1. The Brand Toggle */}
+      {/* 1. The Brand Toggle (Primary Universe Filter) */}
       <div className="flex justify-center mb-12">
         <div className="inline-flex p-1 bg-card border border-border rounded-sm shadow-sm">
           {['Apple', 'Samsung'].map((brand) => (
@@ -105,21 +106,14 @@ export default function OmniCatalogPage() {
           className="w-full bg-card/80 backdrop-blur-sm border-2 border-border text-foreground px-16 py-6 text-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary rounded-sm transition-all placeholder:text-muted-foreground shadow-sm"
         />
         <div className="absolute -bottom-6 right-0 text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
-          {isLoading ? (
-            <span className="flex items-center gap-1">
-              <Loader2 className="w-3 h-3 animate-spin" /> Syncing Data...
-            </span>
-          ) : (
-            `${filteredParts.length} Results Found`
-          )}
+          {isLoading ? 'Syncing...' : `${filteredParts.length} Results Found`}
         </div>
       </div>
 
       {/* 3. The Live Data Grid */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-4">
-          <Loader2 className="w-12 h-12 text-primary animate-spin" strokeWidth={1.5} />
-          <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest animate-pulse">Initializing Catalog...</p>
+        <div className="flex justify-center py-24">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -133,9 +127,11 @@ export default function OmniCatalogPage() {
               >
                 <div className="mb-6">
                   <div className="flex justify-between items-start mb-4">
+                    {/* Golden SKU */}
                     <span className="font-mono text-[10px] text-primary bg-primary/10 border border-primary/20 px-2 py-1 uppercase tracking-widest rounded-sm">
                       {part.skuId}
                     </span>
+                    {/* Stock Status */}
                     <span className={`flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider px-2 py-1 rounded-sm ${part.stockLevel > 0 ? 'text-success bg-success/10 border border-success/20' : 'text-destructive bg-destructive/10 border border-destructive/20'}`}>
                       {part.stockLevel > 0 ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
                       {part.stockLevel > 0 ? `${part.stockLevel} IN STOCK` : 'OUT OF STOCK'}
@@ -161,8 +157,7 @@ export default function OmniCatalogPage() {
                   
                   <button 
                     disabled={part.stockLevel === 0}
-                    onClick={() => handleAddToCart(part)}
-                    className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded-sm flex items-center gap-2 active:scale-95"
+                    className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded-sm flex items-center gap-2"
                   >
                     <ShoppingCart className="w-3 h-3" />
                     Add
@@ -185,3 +180,13 @@ export default function OmniCatalogPage() {
     </div>
   );
 }
+```
+
+### Why this is a massive UX Upgrade:
+1. **The "Engineering Grid" Shines:** Because the main search bar and the product cards use `bg-card/80 backdrop-blur-sm`, they are slightly translucent. This means the subtle blueprint grid background we built earlier will physically show *through* the cards, creating an incredible glass-like depth.
+2. **Frictionless Navigation:** Notice there is no "Search Button." The `filteredParts` `useMemo` hook calculates the AND-logic search in real-time as they type. It feels as fast as native desktop software.
+3. **Data Integrity Built-In:** It perfectly handles the `wholesalePrice === 0` ("Contact for Price") rule established in `BACKENDREPORT` Entry 1, and expects prices to arrive in cents.
+
+If you drop this in, your catalog is going to look exactly like that high-end Algerian ERP we reviewed—dense, fast, and highly technical.
+
+Should we keep pushing on the UI and build out the **Admin Performance Matrix** next, or do you want to look at tying that "Add to Cart" button into your existing Zustand `cartStore`?
