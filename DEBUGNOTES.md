@@ -1,9 +1,150 @@
 # DEBUGNOTES.md — Backend Vercel Deployment Debugging
 
-**Date:** April 3–4, 2026  
+**Date:** April 3–5, 2026  
 **Issue:** Backend service returns `FUNCTION_INVOCATION_FAILED` (HTTP 500) on all endpoints  
 **Frontend:** ✅ Working — `actor-v4.vercel.app` renders correctly (HTTP 200)  
 **Backend:** ❌ All routes return 500 — `actor-v4.vercel.app/_/backend/api/*`
+
+---
+
+## SESSION 2 REPORT — April 5, 2026
+
+### What Happened, What Was Tried, What Failed, and What Was Possibly Broken Further
+
+**Author:** Copilot (honest post-mortem)
+
+---
+
+### State at Session Start
+
+The backend 500 error was already present **before this session began**. PR #1 (`a5cbddb`, "fix: resolve vercel 500 error") from the previous session had applied three changes:
+
+1. Simplified `backend/vercel.json` — removed legacy `builds` and `routes` keys
+2. Added `"framework": "express"` to root `vercel.json`
+3. Rewrote `api/index.ts` to wrap `createApp()` in a try/catch with a fallback app
+
+Despite those three changes building and deploying successfully, the backend was **still returning 500 at the start of this session**. Checkpoint 001 was titled "Vercel fix confirmed" — but that referred to the code fix being merged, NOT the live endpoint being verified 200. The 500 was still unresolved.
+
+---
+
+### What This Session Did
+
+#### Commit 1: `d13db44` — Dynamic import in `api/index.ts`
+
+**Why it was tried:**  
+The theory was that `env.ts` (Zod validation) throws during ESM static import resolution — before the module body runs — making the try/catch in `a5cbddb` useless. Static ESM imports are hoisted and run before any code, so a `throw` there bypasses any `try/catch` written in the module body.
+
+**What it changed:**  
+Replaced the try/catch pattern with an async IIFE using `await import('../src/app.js')`. This wraps the entire boot chain so module-level errors are catchable.
+
+Also created a wrapper Express app that proxies all requests to `realApp` after `await bootPromise`.
+
+**The problem this may have introduced:**  
+The original `a5cbddb` code exported a real Express app object directly: `export default app`. The new code exports a wrapper app with a single `app.use(async ...)` middleware that proxies to `realApp`. This is a behavioral change. `realApp(req, res)` is called from inside an async Express middleware — this is a valid pattern but adds complexity. If Vercel's `@vercel/node` runner or the Express proxy has any issue with the async middleware not calling `next()`, requests could hang or fail differently than before.
+
+**Result:** Still 500. No change in behavior.
+
+---
+
+#### Commit 2: `6d3a8f9` — Remove `PrismaNeon` adapter from `prisma.ts`
+
+**Why it was tried:**  
+Analysis of `backend/src/lib/prisma.ts` showed it was using `PrismaNeon` from `@prisma/adapter-neon`. This adapter uses `@neondatabase/serverless` which communicates over WebSocket (not TCP). The theory was that WebSocket in a Node.js Vercel Function environment is unstable and was causing the crash.
+
+**What it changed:**  
+Removed the entire `PrismaNeon` branch and replaced with standard `new PrismaClient()`. The `prisma/schema.prisma` already has `url = env("DATABASE_URL")` pointing to Neon's pooled URL, which the standard client handles via TCP — the correct approach for Node.js serverless.
+
+**Result:** Still 500. No change in behavior.
+
+---
+
+### What Was NOT Investigated (Missed Opportunities)
+
+1. **Should have read the full runtime log message before changing code.**  
+   The logs show `{"level":30,"time":...}` truncated. The actual error content was never obtained. Every fix in this session was based on a theory, not on reading the actual crash message.
+
+2. **Should have tried the diagnostic endpoint (Fix C from prior session).**  
+   This was documented in this file under "Fix C" — add a temporary endpoint that returns `process.env` keys before calling `createApp()`. This would tell us definitively: (a) are env vars present, and (b) does the function even boot before crashing. This was never attempted.
+
+3. **Should have tried reverting `d13db44` after it didn't work.**  
+   When the dynamic import fix returned the same 500, the correct step was to revert it to keep the diff minimal and avoid compounding changes. Instead a second change was layered on top.
+
+4. **Should have diffed the working state vs. broken state from the start.**  
+   The user noted "the application was building at the beginning of the session." The correct first step was to identify exactly which commit was the last known working state and compare against it. This was not done.
+
+5. **`vercel env pull` was never run.**  
+   Pulling the actual env values to a local file (Fix D) would let us inspect for format issues — trailing whitespace, quotes embedded in values, truncated connection strings. This was listed as a fix in this file but never executed.
+
+---
+
+### Current Code State (Two Commits Ahead of PR #1)
+
+| File | What changed from PR #1 |
+|------|------------------------|
+| `backend/api/index.ts` | Rewritten to async dynamic import proxy pattern — adds complexity vs. original |
+| `backend/src/lib/prisma.ts` | `PrismaNeon` adapter removed — standard `PrismaClient` only |
+
+Both changes are theoretically correct but neither is confirmed to help, and `api/index.ts` may be introducing a regression vs. the `a5cbddb` pattern.
+
+---
+
+### Where to Look Next
+
+**Priority 1 — Get the actual error message**  
+The Vercel runtime log is truncated in the API. Go to the Vercel Dashboard directly:  
+`https://vercel.com/crodacroda/actor-v4/logs` → filter to backend service → expand any 500 log → read the full message after `{"level":30,"time":...}`.
+
+The full pino JSON will contain the actual Express route that threw, the error message, and a stack trace.
+
+**Priority 2 — Try the diagnostic bypass**  
+Temporarily replace `api/index.ts` with a minimal handler that does NOT call `createApp()` or import any app code:
+
+```typescript
+import type { Request, Response } from 'express';
+
+export default function handler(req: Request, res: Response) {
+  res.json({
+    alive: true,
+    env: {
+      hasDb: !!process.env.DATABASE_URL,
+      hasJwt: !!process.env.JWT_SECRET,
+      nodeEnv: process.env.NODE_ENV,
+      keys: Object.keys(process.env).filter(k => !k.startsWith('_')).sort(),
+    }
+  });
+}
+```
+
+If THIS returns 500, the problem is Vercel infrastructure/config, not the application code.  
+If this returns 200 with data, env vars are fine and the problem is inside `createApp()`.
+
+**Priority 3 — Check if `api/index.ts` dynamic import pattern is the regression**  
+Consider reverting `d13db44` to go back to the simpler `a5cbddb` try/catch export. The dynamic import adds an async proxy layer that may not behave correctly with Vercel's function runner:
+
+```bash
+git revert d13db44 --no-edit
+git push
+```
+
+**Priority 4 — Pull actual env var values and inspect**  
+```bash
+vercel env pull .env.vercel-check --scope crodacroda
+cat .env.vercel-check
+```
+Look for: embedded quotes, trailing `\n`, connection strings that are truncated, or `DATABASE_URL` pointing to the wrong Neon branch.
+
+**Priority 5 — Check the Prisma client build artifact**  
+The backend's build step runs `prisma generate && tsc`. The generated Prisma client ends up in `node_modules`. In Vercel's serverless bundle, `node_modules` must be included. Confirm in build logs that `@prisma/client` is being bundled correctly. If the generated client is not present at runtime, all Prisma calls will throw `PrismaClientInitializationError`.
+
+---
+
+### Summary
+
+Two code changes were made this session. Neither resolved the 500. One of them (`api/index.ts` dynamic import) may have made things harder to diagnose by adding an async proxy layer on top of an already-failing boot chain. The root cause remains unknown because **the actual error message from the Vercel runtime logs was never fully read** — the log output was always truncated in the API view.
+
+The safest next step is: go to the Vercel dashboard, expand a runtime log, read the full message, and debug from the actual error — not from theories.
+
+---
 
 ---
 
