@@ -177,6 +177,7 @@ model Inventory {
 
   specifications  Specification[]
   compatibilities CompatibilityMap[]
+  images          ProductImage[]
   cartItems       Cart[]
   orderLines      OrderLine[]
 
@@ -194,6 +195,18 @@ model Specification {
   inventory Inventory @relation(fields: [skuId], references: [skuId], onDelete: Cascade)
 
   @@unique([skuId, label])
+  @@index([skuId])
+}
+
+model ProductImage {
+  id        String    @id @default(cuid())
+  skuId     String
+  url       String
+  altText   String?
+  sortOrder Int       @default(0)
+  inventory Inventory @relation(fields: [skuId], references: [skuId], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
   @@index([skuId])
 }
 
