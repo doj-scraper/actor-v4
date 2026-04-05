@@ -1,7 +1,7 @@
 import { createApp } from '../src/app.js';
 import express from 'express';
 
-let app: any;
+let app;
 
 try {
   // If env.ts fails validation here, we will catch it!
@@ -11,7 +11,7 @@ try {
   
   // Create a dummy Express app just to serve the exact error to the browser
   const fallbackApp = express();
-  fallbackApp.all('*', (req: any, res: any) => {
+  fallbackApp.all('*', (req, res) => {
     res.status(500).json({
       success: false,
       error: "Server failed to boot",
