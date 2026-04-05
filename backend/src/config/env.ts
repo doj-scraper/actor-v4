@@ -27,9 +27,12 @@ function parseEnv(): Env {
   const result = envSchema.safeParse(process.env);
 
   if (!result.success) {
-    console.error('❌ Invalid environment variables:', result.error.format());
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Environment validation failed in production');
+    const errorMsg = '❌ Invalid environment variables: ' + JSON.stringify(result.error.format());
+    console.error(errorMsg);
+    
+    // Always throw in Vercel/Production to ensure it's caught by our index.ts wrapper
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      throw new Error(errorMsg);
     }
     process.exit(1);
   }
