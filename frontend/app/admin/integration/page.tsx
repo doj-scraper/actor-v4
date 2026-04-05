@@ -38,31 +38,59 @@ export default function IntegrationHub() {
     setValidating(true);
     setContractLog([]);
     addLog("INIT: Starting API Contract Validation...");
-    
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+    // Test 1: Brands contract
     try {
-      addLog("SEND: GET /api/catalog/parts?q=screen");
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const res = await fetch(`${apiUrl}/api/catalog/parts?q=screen`);
+      addLog("SEND: GET /api/brands");
+      const res = await fetch(`${apiUrl}/api/brands`);
       const data = await res.json();
-      
-      if (data.parts && Array.isArray(data.parts)) {
-        addLog(`RECV: OK. Found ${data.parts.length} parts.`);
-        const sample = data.parts[0];
-        
-        if (sample) {
-          if ('wholesalePrice' in sample && Number.isInteger(sample.wholesalePrice)) {
-             addLog("PASS: wholesalePrice is Int (cents).");
-          } else {
-             addLog("FAIL: wholesalePrice missing or not Int!");
-          }
-          if ('stockLevel' in sample) addLog("PASS: stockLevel present.");
-          if ('skuId' in sample) addLog("PASS: skuId present.");
-        }
+      if (data.success && Array.isArray(data.brands)) {
+        addLog(`PASS: /api/brands → { brands: [...] } — ${data.brands.length} brands.`);
       } else {
-        addLog("FAIL: Response missing { parts } array.");
+        addLog("FAIL: /api/brands missing { brands } array.");
       }
     } catch (err: any) {
-      addLog(`ERR: ${err.message}`);
+      addLog(`ERR: /api/brands → ${err.message}`);
+    }
+
+    // Test 2: Parts contract (omni search uses ?device=)
+    try {
+      addLog("SEND: GET /api/parts?device=iPhone 17 Pro Max");
+      const res = await fetch(`${apiUrl}/api/parts?device=${encodeURIComponent('iPhone 17 Pro Max')}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.parts)) {
+        addLog(`PASS: /api/parts → { parts: [...] } — ${data.parts.length} parts found.`);
+        const sample = data.parts[0];
+        if (sample) {
+          if ('wholesalePrice' in sample && Number.isInteger(sample.wholesalePrice)) {
+            addLog("PASS: wholesalePrice is Int (cents).");
+          } else {
+            addLog("FAIL: wholesalePrice missing or not Int!");
+          }
+          if ('stockLevel' in sample) addLog("PASS: stockLevel present.");
+          if ('skuId' in sample) addLog("PASS: skuId (Smart SKU) present.");
+        }
+      } else {
+        addLog("FAIL: /api/parts missing { parts } array.");
+      }
+    } catch (err: any) {
+      addLog(`ERR: /api/parts → ${err.message}`);
+    }
+
+    // Test 3: Hierarchy contract
+    try {
+      addLog("SEND: GET /api/hierarchy");
+      const res = await fetch(`${apiUrl}/api/hierarchy`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.hierarchy)) {
+        addLog(`PASS: /api/hierarchy → { hierarchy: [...] } — ${data.hierarchy.length} brands.`);
+      } else {
+        addLog("FAIL: /api/hierarchy missing { hierarchy } array.");
+      }
+    } catch (err: any) {
+      addLog(`ERR: /api/hierarchy → ${err.message}`);
     }
 
     addLog("DONE: Validation complete.");
