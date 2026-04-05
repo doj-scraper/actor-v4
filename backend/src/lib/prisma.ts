@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
 import { env } from '../config/env.js';
 import { logger } from './logger.js';
 
@@ -8,20 +7,13 @@ declare global {
 }
 
 function createPrismaClient(): PrismaClient {
-  const isNeon = env.DATABASE_URL.includes('neon.tech');
-
-  if (isNeon) {
-    const connectionString = env.DIRECT_URL || env.DATABASE_URL;
-    const adapter = new PrismaNeon({ connectionString });
-
-    logger.info('Initializing Prisma with Neon serverless adapter');
-    return new PrismaClient({ adapter });
-  }
-
-  logger.info('Initializing standard Prisma client');
+  // Use the standard Prisma client with the pooled DATABASE_URL.
+  // PrismaNeon/@prisma/adapter-neon is for Edge runtimes (no TCP).
+  // In Node.js (Vercel Functions), standard client + pooled URL is correct.
+  logger.info('Initializing Prisma client');
   return new PrismaClient({
-    log: env.NODE_ENV === 'development' 
-      ? ['query', 'error', 'warn'] 
+    log: env.NODE_ENV === 'development'
+      ? ['query', 'error', 'warn']
       : ['error'],
   });
 }
